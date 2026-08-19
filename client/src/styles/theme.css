@@ -1,0 +1,307 @@
+@import 'tailwindcss';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ORBITWISE DESIGN TOKENS
+   Tailwind v4 is CSS-first: everything declared in @theme becomes a real
+   utility (bg-primary-600, rounded-2xl, shadow-lg, font-display, ...).
+   There is no tailwind.config.js — this file is the single source of truth.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ─── Typography ────────────────────────────────────────────────────────
+     Two families, no more. Inter carries the product; Fraunces appears only
+     in hero and section display text, where it does the work of a brand.     */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-display-sm: 2.25rem;
+  --text-display-sm--line-height: 1.15;
+  --text-display-sm--letter-spacing: -0.022em;
+  --text-display-md: 3rem;
+  --text-display-md--line-height: 1.08;
+  --text-display-md--letter-spacing: -0.028em;
+  --text-display-lg: 3.75rem;
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.032em;
+  --text-display-xl: 4.5rem;
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.036em;
+
+  /* ─── Primary · Electric Indigo ─────────────────────────────────────────
+     Actions, links, active states, match emphasis. Exactly one accent hue.   */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+  --color-primary-950: #1e1b4b;
+
+  /* ─── Navy · surfaces, headings, body text ──────────────────────────────
+     Custom ramp rather than Tailwind slate: cooler and deeper, so dark
+     sections read as premium rather than merely grey.                        */
+  --color-navy-50: #f5f7fa;
+  --color-navy-100: #e9edf3;
+  --color-navy-200: #ced6e2;
+  --color-navy-300: #a6b3c7;
+  --color-navy-400: #7688a3;
+  --color-navy-500: #556880;
+  --color-navy-600: #3f5068;
+  --color-navy-700: #2c3a4e;
+  --color-navy-800: #1b2534;
+  --color-navy-900: #111a26;
+  --color-navy-950: #0b1220;
+
+  /* ─── Semantic ──────────────────────────────────────────────────────────
+     Named by meaning, not colour, so a palette change never means a find-and-
+     replace across 200 components.
+
+     Full 50–900 ramps rather than a hand-picked subset. Tailwind silently emits
+     nothing for an undefined shade, so `border-danger-300` on a rejected input
+     produced no border at all — a missing token fails invisibly in CSS, which is
+     the worst way for it to fail. Complete ramps remove the whole class of bug. */
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  --color-danger-50: #fff1f2;
+  --color-danger-100: #ffe4e6;
+  --color-danger-200: #fecdd3;
+  --color-danger-300: #fda4af;
+  --color-danger-400: #fb7185;
+  --color-danger-500: #f43f5e;
+  --color-danger-600: #e11d48;
+  --color-danger-700: #be123c;
+  --color-danger-800: #9f1239;
+  --color-danger-900: #881337;
+
+  --color-info-50: #eff6ff;
+  --color-info-100: #dbeafe;
+  --color-info-200: #bfdbfe;
+  --color-info-300: #93c5fd;
+  --color-info-400: #60a5fa;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
+
+  /* Page background vs card surface — the whole layout rests on this pair. */
+  --color-canvas: #f8fafc;
+  --color-surface: #ffffff;
+
+  /* ─── Radius ────────────────────────────────────────────────────────────
+     Cards are rounded-2xl (24px) throughout; this ramp makes that the norm.  */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+
+  /* ─── Shadow ────────────────────────────────────────────────────────────
+     Navy-tinted and low-alpha. Pure-black shadows are the fastest way to make
+     a premium interface look cheap.                                          */
+  --shadow-xs: 0 1px 2px 0 rgb(11 18 32 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(11 18 32 / 0.06), 0 1px 2px -1px rgb(11 18 32 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(11 18 32 / 0.07), 0 2px 4px -2px rgb(11 18 32 / 0.04);
+  --shadow-lg: 0 12px 24px -6px rgb(11 18 32 / 0.09), 0 4px 8px -4px rgb(11 18 32 / 0.05);
+  --shadow-xl: 0 24px 48px -12px rgb(11 18 32 / 0.14), 0 8px 16px -8px rgb(11 18 32 / 0.06);
+  --shadow-2xl: 0 40px 80px -20px rgb(11 18 32 / 0.2);
+  --shadow-ring: 0 0 0 1px rgb(11 18 32 / 0.06);
+  --shadow-primary: 0 8px 24px -6px rgb(79 70 229 / 0.35);
+
+  /* ─── Motion ────────────────────────────────────────────────────────────
+     Micro-interactions 150–200ms; section reveals 400–600ms. Nothing longer:
+     animation should feel like responsiveness, never like waiting.           */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --animate-fade-up: fade-up 0.5s var(--ease-out-quint) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-indeterminate: indeterminate 1.4s var(--ease-in-out-quart) infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Sweeping highlight for skeleton loaders. */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Indeterminate progress bar. The travel range assumes a bar one third the
+   width of its track, so -100% → 300% carries it fully across and off. */
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE LAYER
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-navy-100);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-navy-800);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-navy-950);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Every interactive element gets a visible focus ring. `outline: none` is
+     never used without this replacement — keyboard users are users. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-600);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Chrome/Safari autofill repaints inputs a jarring pale yellow. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-navy-900);
+    box-shadow: 0 0 0 1000px var(--color-surface) inset;
+  }
+
+  ::selection {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-900);
+  }
+
+  ::placeholder {
+    color: var(--color-navy-400);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding-inline: 1.25rem;
+  @media (width >= 768px) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 1280px) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Vertical rhythm for public-site sections — applied once, not re-guessed. */
+@utility section-y {
+  padding-block: 5rem;
+  @media (width >= 768px) {
+    padding-block: 7rem;
+  }
+}
+
+/* Hairline that reads as structure rather than a border. */
+@utility hairline {
+  box-shadow: var(--shadow-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY — global reduced-motion kill switch
+   Framer Motion components additionally read useReducedMotion(); this is the
+   backstop for CSS transitions, smooth scrolling and keyframes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Thin, unobtrusive scrollbars in scrollable panels (sidebars, chat, tables). */
+@layer utilities {
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-navy-200) transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: var(--color-navy-200);
+    border-radius: 9999px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}

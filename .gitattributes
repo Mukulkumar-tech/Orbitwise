@@ -1,0 +1,25 @@
+# Normalise line endings.
+#
+# This repo is authored on Windows but will be cloned on macOS and Linux. Without
+# this, every file Git touches gets CRLF in the working copy and the next person
+# to open it on another platform sees a whole-file diff on save.
+#
+# `text=auto` stores LF in the repository and checks out the platform default.
+* text=auto
+
+# Lockfiles: LF everywhere, so a Windows install cannot produce a diff that looks
+# like every dependency changed.
+package-lock.json text eol=lf
+
+# Shell scripts must keep LF or they will not execute on Linux.
+*.sh text eol=lf
+
+# Binary — never touch, never diff.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

@@ -1,0 +1,29 @@
+node_modules/
+dist/
+build/
+.vite/
+
+# Environment — never commit real secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Uploaded student documents are private by definition
+server/uploads/
+server/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Test output
+coverage/

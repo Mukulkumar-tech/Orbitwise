@@ -1,0 +1,30 @@
+{
+  "name": "orbitwise",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Orbitwise — helping students discover, plan and complete their study-abroad journey.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c magenta,cyan --kill-others-on-fail \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm run dev --workspace server",
+    "dev:client": "npm run dev --workspace client",
+    "build": "npm run build --workspace client",
+    "preview": "npm run preview --workspace client",
+    "start": "npm run start --workspace server",
+    "seed": "npm run seed --workspace server",
+    "test": "npm run test --workspaces --if-present",
+    "test:server": "npm run test --workspace server",
+    "test:client": "npm run test --workspace client",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
