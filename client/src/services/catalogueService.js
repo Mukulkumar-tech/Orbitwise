@@ -25,6 +25,9 @@ export const catalogueService = {
     api.get('/courses', { params, signal }).then((r) => ({ items: r.data, meta: r.meta })),
 
   getCourse: (slug, signal) => api.get(`/courses/${slug}`, { signal }).then((r) => r.data),
+
+  /** `slugs` is a comma-separated list of 2–4 course slugs. */
+  compare: (slugs, signal) => api.get('/courses/compare', { params: { slugs }, signal }).then((r) => r.data),
 };
 
 export default catalogueService;

@@ -277,6 +277,88 @@ export const catalogueService = {
     };
   },
 
+  /**
+   * Side-by-side comparison of 2–4 courses.
+   *
+   * Returns per-dimension winners alongside the courses, computed server-side.
+   * The client could diff the numbers itself, but "cheapest" is not always
+   * "lowest tuition" — it is lowest total programme cost including living, over
+   * differing durations — and that arithmetic belongs next to the arithmetic that
+   * produced the costs in the first place.
+   */
+  async compare(slugs, profile = null) {
+    const unique = [...new Set(slugs)];
+    if (unique.length < 2) throw ApiError.badRequest('Pick at least two courses to compare');
+    if (unique.length > 4) throw ApiError.badRequest('You can compare up to four courses at once');
+
+    const [countriesByCode, courses] = await Promise.all([
+      loadCountries(),
+      Course.find({ slug: { $in: unique }, isActive: true }).populate('university', UNIVERSITY_CARD_FIELDS).lean(),
+    ]);
+
+    if (courses.length !== unique.length) {
+      throw ApiError.notFound('One or more of those courses could not be found');
+    }
+
+    // Preserve the order the caller asked for, so columns do not reshuffle
+    // between renders.
+    const ordered = unique.map((slug) => courses.find((course) => course.slug === slug));
+
+    const items = ordered.map((course) => {
+      const country = countriesByCode.get(course.countryCode);
+      const match = profile?.education?.level
+        ? scoreCourse(profile, course, { country, university: course.university })
+        : null;
+      return decorate(course, country, match);
+    });
+
+    /** Lowest wins for cost, duration, ranking and entry bar; highest for match. */
+    const bestSlugBy = (pick, { highest = false } = {}) => {
+      const candidates = items
+        .map((item) => ({ slug: item.slug, value: pick(item) }))
+        .filter((entry) => entry.value != null && Number.isFinite(entry.value));
+      if (!candidates.length) return null;
+      const winner = candidates.reduce((best, entry) =>
+        highest ? (entry.value > best.value ? entry : best) : entry.value < best.value ? entry : best
+      );
+      return winner.slug;
+    };
+
+    const bestBy = {
+      match: bestSlugBy((item) => item.match?.score, { highest: true }),
+      totalCost: bestSlugBy((item) => item.programmeCostInr),
+      tuition: bestSlugBy((item) => item.tuitionPerYearInr),
+      duration: bestSlugBy((item) => item.durationMonths),
+      ranking: bestSlugBy((item) => item.university?.worldRanking),
+      entryRequirement: bestSlugBy((item) => item.requirements?.minIelts),
+      acceptanceRate: bestSlugBy((item) => item.university?.acceptanceRate, { highest: true }),
+    };
+
+    /**
+     * The single recommendation, with its reason stated.
+     *
+     * Match score when a profile exists, because that already weighs cost,
+     * eligibility and preference together. Falling back to lowest total cost for
+     * an anonymous visitor is honest about having nothing personal to go on —
+     * better than implying a personalized answer we cannot produce.
+     */
+    const recommended = bestBy.match
+      ? {
+          slug: bestBy.match,
+          reason: 'Highest OrbitMatch score — the best overall fit for your profile',
+          basis: 'match',
+        }
+      : bestBy.totalCost
+        ? {
+            slug: bestBy.totalCost,
+            reason: 'Lowest total programme cost. Build a profile for a fit-based recommendation.',
+            basis: 'cost',
+          }
+        : null;
+
+    return { items, bestBy, recommended, personalized: Boolean(profile?.education?.level) };
+  },
+
   /** Shortlisted courses, re-scored on read so the profile stays authoritative. */
   async shortlistFor(profile) {
     if (!profile.shortlist?.length) return [];

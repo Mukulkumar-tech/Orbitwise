@@ -49,3 +49,7 @@ export const listCourses = asyncHandler(async (req, res) => {
 export const getCourse = asyncHandler(async (req, res) =>
   ok(res, await catalogueService.courseBySlug(req.params.slug, await profileOf(req)))
 );
+
+export const compareCourses = asyncHandler(async (req, res) =>
+  ok(res, await catalogueService.compare(req.query.slugs, await profileOf(req)))
+);

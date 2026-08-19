@@ -2,6 +2,24 @@ import { z } from 'zod';
 import { DEGREE_LEVELS, STUDY_FIELDS } from '../constants/index.js';
 
 /**
+ * `?slugs=a,b,c` — comma-separated rather than repeated params, so the compare
+ * URL a student shares stays short and readable.
+ */
+export const compareQuery = z.object({
+  slugs: z
+    .string()
+    .trim()
+    .min(1, 'Pick at least two courses to compare')
+    .transform((value) => value.split(',').map((slug) => slug.trim()).filter(Boolean))
+    .pipe(
+      z
+        .array(z.string().regex(/^[a-z0-9-]+$/, 'Invalid course identifier'))
+        .min(2, 'Pick at least two courses to compare')
+        .max(4, 'You can compare up to four courses at once')
+    ),
+});
+
+/**
  * Query validation for catalogue and recommendation endpoints.
  *
  * Query strings are always strings, so everything numeric is coerced here — which

@@ -39,6 +39,53 @@ export const APPLICATION_STATUS = {
 
 export const APPLICATION_STATUS_VALUES = Object.values(APPLICATION_STATUS);
 
+export const APPLICATION_STATUS_LABELS = {
+  draft: 'Draft',
+  documents_pending: 'Documents Pending',
+  ready_to_apply: 'Ready to Apply',
+  submitted: 'Submitted',
+  under_review: 'Under Review',
+  offer_received: 'Offer Received',
+  rejected: 'Rejected',
+  withdrawn: 'Withdrawn',
+};
+
+/**
+ * Legal status transitions.
+ *
+ * An application is a state machine, not a free-text field. Without this an
+ * application could jump from `draft` straight to `offer_received`, and the
+ * timeline — which is the student's record of what actually happened — would
+ * describe a sequence of events that never occurred.
+ *
+ * `rejected` and `withdrawn` are terminal by design. Reopening a rejected
+ * application would rewrite history; the correct action is a new application.
+ */
+export const APPLICATION_TRANSITIONS = {
+  draft: ['documents_pending', 'ready_to_apply', 'withdrawn'],
+  documents_pending: ['ready_to_apply', 'draft', 'withdrawn'],
+  ready_to_apply: ['submitted', 'documents_pending', 'withdrawn'],
+  submitted: ['under_review', 'withdrawn'],
+  under_review: ['offer_received', 'rejected', 'withdrawn'],
+  offer_received: ['withdrawn'],
+  rejected: [],
+  withdrawn: [],
+};
+
+export const canTransition = (from, to) => Boolean(APPLICATION_TRANSITIONS[from]?.includes(to));
+
+/** Statuses a student may set themselves; the rest are university outcomes. */
+export const STUDENT_SETTABLE_STATUSES = ['draft', 'documents_pending', 'ready_to_apply', 'submitted', 'withdrawn'];
+
+/** Ordered stages the application timeline renders, independent of status. */
+export const APPLICATION_STAGES = [
+  { key: 'created', label: 'Application started' },
+  { key: 'documents', label: 'Documents' },
+  { key: 'submitted', label: 'Submitted to university' },
+  { key: 'review', label: 'University review' },
+  { key: 'decision', label: 'Decision' },
+];
+
 export const DOCUMENT_TYPES = [
   'passport',
   'degree_certificate',

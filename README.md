@@ -91,6 +91,11 @@ as pure functions that are unit-testable without HTTP or a database.
 | `GET · PATCH` | `/api/students/me/profile` | Patches merge leaf paths; the response carries completion, guidance and eligibility |
 | `GET` | `/api/students/me/recommendations` | Ranked, filterable, paginated |
 | `GET · POST · DELETE` | `/api/students/me/shortlist[/:courseId]` | Capped at 20 |
+| `GET` | `/api/courses/compare?slugs=a,b,c` | 2–4 courses with per-dimension winners. Registered *before* `/:slug` |
+| `GET · POST` | `/api/applications` | Own applications; opens in `draft` |
+| `GET` | `/api/applications/:id` | Includes rendered stages and the transitions **your role** may make |
+| `PATCH` | `/api/applications/:id/status` | Rejects illegal edges (400) and role-forbidden ones (403) separately |
+| `POST` | `/api/applications/:id/notes` | Counsellor-private notes filtered server-side |
 
 Every student route says `me`. There is no `:studentId` anywhere in the portal, so one student cannot
 read another's profile by guessing an id — counsellor access will be a separate, explicitly authorized
@@ -222,8 +227,8 @@ visible focus ring, form errors are wired through `aria-invalid` + `aria-describ
 | 5 · Student onboarding — 5-step wizard, saved per step, eligibility-aware | ✅ Complete |
 | 6 · OrbitMatch recommendation engine — 7 weighted scorers, explained | ✅ Complete |
 | 7 · Student dashboard — guidance, stats, next steps, top matches | ✅ Complete |
-| 8 · Course discovery — student search, filters, shortlist, public catalogue and detail pages ✅ · side-by-side comparison ⬜ | 🟡 Partial |
-| 9 · Applications | ⬜ |
+| 8 · Course discovery — search, filters, shortlist, public catalogue, detail pages, side-by-side comparison | ✅ Complete |
+| 9 · Applications — status machine, append-only timeline, tracker, notes | ✅ Complete |
 | 10 · Documents | ⬜ |
 | 11 · Scholarships + cost calculator | ⬜ |
 | 12 · Counsellor portal + messaging | ⬜ |

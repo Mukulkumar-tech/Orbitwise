@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Bookmark, Compass, LayoutDashboard, LogOut, UserCog } from 'lucide-react';
+import { Bookmark, Compass, FileText, LayoutDashboard, LogOut, UserCog } from 'lucide-react';
 
 import Avatar from '../components/ui/Avatar.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -14,6 +14,7 @@ const NAV = [
   { to: PATHS.studentHome, label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: PATHS.studentCourses, label: 'Find courses', icon: Compass },
   { to: PATHS.studentShortlist, label: 'Shortlist', icon: Bookmark },
+  { to: PATHS.studentApplications, label: 'Applications', icon: FileText },
   { to: PATHS.studentProfile, label: 'Your profile', icon: UserCog },
 ];
 
