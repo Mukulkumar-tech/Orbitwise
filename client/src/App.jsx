@@ -12,6 +12,8 @@ import Universities from './pages/public/Universities.jsx';
 import UniversityDetail from './pages/public/UniversityDetail.jsx';
 import Courses from './pages/public/Courses.jsx';
 import CourseDetail from './pages/public/CourseDetail.jsx';
+import Scholarships from './pages/public/Scholarships.jsx';
+import CostCalculator from './pages/public/CostCalculator.jsx';
 import SuccessStories from './pages/public/SuccessStories.jsx';
 import Contact from './pages/public/Contact.jsx';
 import ContentPage from './pages/public/ContentPage.jsx';
@@ -56,6 +58,8 @@ export default function App() {
         <Route path={PATHS.university()} element={<UniversityDetail />} />
         <Route path={PATHS.courses} element={<Courses />} />
         <Route path={PATHS.course()} element={<CourseDetail />} />
+        <Route path={PATHS.scholarships} element={<Scholarships />} />
+        <Route path={PATHS.costCalculator} element={<CostCalculator />} />
         <Route path={PATHS.successStories} element={<SuccessStories />} />
         <Route path={PATHS.about} element={<ContentPage contentKey="about" />} />
         <Route path={PATHS.contact} element={<Contact />} />

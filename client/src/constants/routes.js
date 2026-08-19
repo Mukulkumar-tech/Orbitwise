@@ -23,6 +23,8 @@ export const PATHS = {
   university: (slug = ':slug') => `/universities/${slug}`,
   courses: '/courses',
   course: (slug = ':slug') => `/courses/${slug}`,
+  scholarships: '/scholarships',
+  costCalculator: '/cost-calculator',
   successStories: '/success-stories',
   about: '/about',
   contact: '/contact',

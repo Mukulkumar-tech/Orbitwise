@@ -2,10 +2,12 @@ import Country from '../models/Country.js';
 import University from '../models/University.js';
 import Course from '../models/Course.js';
 import Testimonial from '../models/Testimonial.js';
+import Scholarship from '../models/Scholarship.js';
 import COUNTRIES from './data/countries.js';
 import UNIVERSITIES from './data/universities.js';
 import COURSES from './data/courses.js';
 import TESTIMONIALS from './data/testimonials.js';
+import SCHOLARSHIPS from './data/scholarships.js';
 
 /**
  * Seeds the catalogue: destinations, institutions, courses.
@@ -93,9 +95,10 @@ export async function seedCatalogue({ force = false } = {}) {
     await University.deleteMany({});
     await Country.deleteMany({});
     await Testimonial.deleteMany({});
+    await Scholarship.deleteMany({});
   }
 
-  const counts = { countries: 0, universities: 0, courses: 0, testimonials: 0, created: 0, updated: 0 };
+  const counts = { countries: 0, universities: 0, courses: 0, scholarships: 0, testimonials: 0, created: 0, updated: 0 };
 
   const countriesByCode = new Map();
   for (const spec of COUNTRIES) {
@@ -127,6 +130,45 @@ export async function seedCatalogue({ force = false } = {}) {
       expandCourse(spec, university, country)
     );
     counts.courses += 1;
+    counts[created ? 'created' : 'updated'] += 1;
+  }
+
+  // Scholarships are keyed by name + provider, matching the slug derivation —
+  // award names repeat across institutions, so neither field alone is unique.
+  for (const spec of SCHOLARSHIPS) {
+    const { deadlineInDays, award, universityName, ...rest } = spec;
+    const university = universityName ? universitiesByName.get(universityName) : null;
+
+    if (universityName && !university) {
+      throw new Error(`Unknown university "${universityName}" for scholarship "${spec.name}"`);
+    }
+
+    const rate = award.currency ? (FX_TO_INR[award.currency] ?? (award.currency === 'INR' ? 1 : null)) : 1;
+    if (award.type === 'fixed' && rate == null) {
+      throw new Error(`No exchange rate for ${award.currency} (scholarship: ${spec.name})`);
+    }
+
+    const { created } = await upsert(
+      Scholarship,
+      { name: spec.name, provider: spec.provider },
+      {
+        ...rest,
+        universityName: universityName ?? '',
+        university: university?._id ?? null,
+        award: {
+          ...award,
+          currency: award.currency ?? 'INR',
+          // Normalized once at write time, exactly as tuition is, so budget maths
+          // never depends on a rate that has moved since.
+          amountInr: award.type === 'fixed' ? Math.round(award.amount * rate) : null,
+        },
+        // Relative offsets keep seeded deadlines in the future, so the tracker is
+        // never empty and urgency scoring stays exercisable.
+        deadline: deadlineInDays == null ? null : new Date(Date.now() + deadlineInDays * 86_400_000),
+        isActive: true,
+      }
+    );
+    counts.scholarships += 1;
     counts[created ? 'created' : 'updated'] += 1;
   }
 

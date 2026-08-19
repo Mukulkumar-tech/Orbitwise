@@ -6,6 +6,7 @@ import courseRoutes from './courseRoutes.js';
 import { countryRoutes, universityRoutes, optionRoutes } from './catalogueRoutes.js';
 import publicRoutes from './publicRoutes.js';
 import applicationRoutes from './applicationRoutes.js';
+import { scholarshipRoutes, toolRoutes } from './scholarshipRoutes.js';
 
 const router = Router();
 
@@ -18,7 +19,11 @@ router.use('/public', publicRoutes);
 router.use('/courses', courseRoutes);
 router.use('/universities', universityRoutes);
 router.use('/countries', countryRoutes);
+router.use('/scholarships', scholarshipRoutes);
 router.use('/options', optionRoutes);
+
+// ─── Planning tools ─────────────────────────────────────────────────────────
+router.use('/tools', toolRoutes);
 
 // ─── Student portal (authenticated, self-scoped) ────────────────────────────
 router.use('/students', studentRoutes);

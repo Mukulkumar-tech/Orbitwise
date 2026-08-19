@@ -30,6 +30,7 @@ async function seedEphemeralDatabase() {
     `Password for all three: ${DEMO_PASSWORD}`,
     '',
     `Catalogue    ${catalogue.countries} countries · ${catalogue.universities} universities · ${catalogue.courses} courses`,
+    `             ${catalogue.scholarships} scholarships · ${catalogue.testimonials} success stories`,
   ]);
 }
 

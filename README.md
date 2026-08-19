@@ -96,6 +96,19 @@ as pure functions that are unit-testable without HTTP or a database.
 | `GET` | `/api/applications/:id` | Includes rendered stages and the transitions **your role** may make |
 | `PATCH` | `/api/applications/:id/status` | Rejects illegal edges (400) and role-forbidden ones (403) separately |
 | `POST` | `/api/applications/:id/notes` | Counsellor-private notes filtered server-side |
+| `GET` | `/api/scholarships` · `/:slug` | `optionalAuth` — scored and gated by education level for a student |
+| `GET` | `/api/scholarships/deadlines` | Eligible awards closing soonest |
+| `GET · POST` | `/api/tools/cost-calculator[/prefill]` | Prefills from a course; POST so a family's budget stays out of URLs and proxy logs |
+
+### Two things the cost engine gets right on purpose
+
+**A scholarship reduces tuition, not total cost.** A 50% award on ₹20L tuition with ₹10.8L annual
+living costs saves ₹20L across two years — **32% of the ₹62.4L total, not 50%**. Telling a student
+otherwise would say they can afford something they cannot.
+
+**One-time costs are not multiplied by years.** Visa and setup fees are paid once; charging them
+against every year of a three-year degree overstates the total by twice the fee. `firstYear` and
+`laterYear` are reported separately for the same reason.
 
 Every student route says `me`. There is no `:studentId` anywhere in the portal, so one student cannot
 read another's profile by guessing an id — counsellor access will be a separate, explicitly authorized
@@ -230,7 +243,7 @@ visible focus ring, form errors are wired through `aria-invalid` + `aria-describ
 | 8 · Course discovery — search, filters, shortlist, public catalogue, detail pages, side-by-side comparison | ✅ Complete |
 | 9 · Applications — status machine, append-only timeline, tracker, notes | ✅ Complete |
 | 10 · Documents | ⬜ |
-| 11 · Scholarships + cost calculator | ⬜ |
+| 11 · Scholarships + cost calculator — scored matching, deadline tracker, full cost engine | ✅ Complete |
 | 12 · Counsellor portal + messaging | ⬜ |
 | 13 · Admin portal | ⬜ |
 | 14 · Polish, a11y, performance, hardening | ⬜ |

@@ -14,9 +14,11 @@ const NAV = [
   { label: 'Countries', to: PATHS.countries },
   { label: 'Universities', to: PATHS.universities },
   { label: 'Courses', to: PATHS.courses },
+  { label: 'Scholarships', to: PATHS.scholarships },
   {
     label: 'Resources',
     children: [
+      { label: 'Cost calculator', to: PATHS.costCalculator, hint: 'What it really costs' },
       { label: 'IELTS', to: PATHS.testPrep('ielts'), hint: 'Bands, format, preparation' },
       { label: 'PTE', to: PATHS.testPrep('pte'), hint: 'Computer-based, fast results' },
       { label: 'TOEFL', to: PATHS.testPrep('toefl'), hint: 'Widely accepted in the US' },

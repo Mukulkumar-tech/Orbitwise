@@ -12,6 +12,8 @@ const COLUMNS = [
       { label: 'Destinations', to: PATHS.countries },
       { label: 'Universities', to: PATHS.universities },
       { label: 'Courses', to: PATHS.courses },
+      { label: 'Scholarships', to: PATHS.scholarships },
+      { label: 'Cost calculator', to: PATHS.costCalculator },
     ],
   },
   {
