@@ -99,6 +99,10 @@ as pure functions that are unit-testable without HTTP or a database.
 | `GET` | `/api/scholarships` · `/:slug` | `optionalAuth` — scored and gated by education level for a student |
 | `GET` | `/api/scholarships/deadlines` | Eligible awards closing soonest |
 | `GET · POST` | `/api/tools/cost-calculator[/prefill]` | Prefills from a course; POST so a family's budget stays out of URLs and proxy logs |
+| `GET` | `/api/documents/checklist` | Requirements derived from the applications actually started |
+| `POST` | `/api/documents` | Multipart. Extension **and** mime type must agree |
+| `GET` | `/api/documents/:id/file` | **The only route returning file content.** Authorizes, then streams |
+| `PATCH` | `/api/documents/:id/review` | Counsellor/admin only — a student cannot verify their own passport |
 
 ### Two things the cost engine gets right on purpose
 
@@ -122,11 +126,14 @@ Each is selected by environment variable, never by a code change. The defaults a
 |---|---|---|
 | `config/db.js` | in-memory MongoDB | `MONGODB_URI` (Atlas / self-hosted) |
 | `services/email/` | console — prints verify/reset links to the terminal | Nodemailer SMTP |
+| `services/storage/` | local disk, outside every static route | Cloudinary — same four methods |
 
-Two more adapters are designed and configured (`STORAGE_PROVIDER`, `AI_PROVIDER` in `.env.example`) but
-not yet built — storage lands with document upload in Phase 10, the AI provider after it. The
-`/api/health` payload lists only adapters that exist, so it never claims a capability the server
-does not have.
+`STORAGE_PROVIDER=cloudinary` is deliberately **not** implemented and fails loudly at boot. Silently
+falling back to disk while an operator believes files are in the cloud is discovered only when someone
+needs the files back.
+
+`AI_PROVIDER` is configured but unbuilt. The `/api/health` payload lists only adapters that exist, so
+it never claims a capability the server does not have.
 
 ---
 
@@ -242,7 +249,7 @@ visible focus ring, form errors are wired through `aria-invalid` + `aria-describ
 | 7 · Student dashboard — guidance, stats, next steps, top matches | ✅ Complete |
 | 8 · Course discovery — search, filters, shortlist, public catalogue, detail pages, side-by-side comparison | ✅ Complete |
 | 9 · Applications — status machine, append-only timeline, tracker, notes | ✅ Complete |
-| 10 · Documents | ⬜ |
+| 10 · Documents — upload, review workflow, authenticated streaming, storage adapter | ✅ Complete |
 | 11 · Scholarships + cost calculator — scored matching, deadline tracker, full cost engine | ✅ Complete |
 | 12 · Counsellor portal + messaging | ⬜ |
 | 13 · Admin portal | ⬜ |

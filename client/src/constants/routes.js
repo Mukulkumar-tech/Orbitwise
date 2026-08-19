@@ -39,6 +39,7 @@ export const PATHS = {
   studentShortlist: '/app/shortlist',
   studentCompare: '/app/compare',
   studentApplications: '/app/applications',
+  studentDocuments: '/app/documents',
   application: (id = ':id') => `/app/applications/${id}`,
   studentProfile: '/app/profile',
   counsellorHome: '/counsellor',

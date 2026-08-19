@@ -32,6 +32,7 @@ import Matches from './pages/student/Matches.jsx';
 import Shortlist from './pages/student/Shortlist.jsx';
 import Compare from './pages/student/Compare.jsx';
 import Applications from './pages/student/Applications.jsx';
+import Documents from './pages/student/Documents.jsx';
 import ApplicationDetail from './pages/student/ApplicationDetail.jsx';
 import Profile from './pages/student/Profile.jsx';
 import Forbidden from './pages/Forbidden.jsx';
@@ -91,6 +92,7 @@ export default function App() {
           <Route path={PATHS.studentShortlist} element={<Shortlist />} />
           <Route path={PATHS.studentCompare} element={<Compare />} />
           <Route path={PATHS.studentApplications} element={<Applications />} />
+          <Route path={PATHS.studentDocuments} element={<Documents />} />
           <Route path={PATHS.application()} element={<ApplicationDetail />} />
           <Route path={PATHS.studentProfile} element={<Profile />} />
         </Route>

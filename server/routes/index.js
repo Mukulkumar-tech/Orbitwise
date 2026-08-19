@@ -7,6 +7,7 @@ import { countryRoutes, universityRoutes, optionRoutes } from './catalogueRoutes
 import publicRoutes from './publicRoutes.js';
 import applicationRoutes from './applicationRoutes.js';
 import { scholarshipRoutes, toolRoutes } from './scholarshipRoutes.js';
+import documentRoutes from './documentRoutes.js';
 
 const router = Router();
 
@@ -28,6 +29,7 @@ router.use('/tools', toolRoutes);
 // ─── Student portal (authenticated, self-scoped) ────────────────────────────
 router.use('/students', studentRoutes);
 router.use('/applications', applicationRoutes);
+router.use('/documents', documentRoutes);
 
 // Remaining feature routers mount here as each phase lands:
 //   /scholarships  /applications  /documents  /counsellors  /appointments

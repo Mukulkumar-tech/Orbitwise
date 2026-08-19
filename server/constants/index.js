@@ -109,6 +109,25 @@ export const DOCUMENT_STATUS = {
 
 export const DOCUMENT_STATUS_VALUES = Object.values(DOCUMENT_STATUS);
 
+export const DOCUMENT_TYPE_LABELS = {
+  passport: 'Passport',
+  degree_certificate: 'Degree Certificate',
+  mark_sheets: 'Mark Sheets',
+  english_test: 'English Test Score',
+  sop: 'Statement of Purpose',
+  lor: 'Letter of Recommendation',
+  resume: 'Resume / CV',
+  financial: 'Financial Documents',
+  visa: 'Visa Documents',
+};
+
+/** Statuses only a reviewer may set. A student cannot verify their own passport. */
+export const REVIEWABLE_DOCUMENT_STATUSES = [
+  DOCUMENT_STATUS.UNDER_REVIEW,
+  DOCUMENT_STATUS.VERIFIED,
+  DOCUMENT_STATUS.REJECTED,
+];
+
 export const ENGLISH_TESTS = ['ielts', 'pte', 'toefl', 'duolingo', 'none', 'planned'];
 
 /**
