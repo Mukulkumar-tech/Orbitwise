@@ -7,6 +7,10 @@ and an admin portal over a single domain core. The centrepiece is **OrbitMatch**
 engine that scores every course against a student's real academic profile, budget, English test and
 goals, and explains *why* it scored that way.
 
+> 📖 **[WALKTHROUGH.md](WALKTHROUGH.md)** — how everything works, the decisions behind it, the full
+> feature inventory, and exactly what is still pending. Start there if you want the narrative rather
+> than the setup steps.
+
 ---
 
 ## Quick start
