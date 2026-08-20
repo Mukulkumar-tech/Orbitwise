@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { resolveDemoFallback } from './demo/index.js';
+
 /**
  * The single Axios instance for the whole client.
  *
@@ -91,23 +93,26 @@ api.interceptors.response.use(
       }
     }
 
-    if (!response) {
-      return Promise.reject(
-        new ApiClientError(
+    const clientError = !response
+      ? new ApiClientError(
           error.code === 'ECONNABORTED'
             ? 'That request took too long. Please try again.'
             : 'Cannot reach the server. Check your connection and try again.',
           { isNetworkError: true }
         )
-      );
-    }
+      : new ApiClientError(response.data?.message || 'Something went wrong', {
+          status: response.status,
+          errors: response.data?.errors ?? null,
+        });
 
-    return Promise.reject(
-      new ApiClientError(response.data?.message || 'Something went wrong', {
-        status: response.status,
-        errors: response.data?.errors ?? null,
-      })
-    );
+    // Last resort before surfacing the error: if the backend is simply not
+    // answering and this is a read we hold fixtures for, serve those instead so
+    // the site stays explorable. Only GETs, only 5xx/network failures, and the UI
+    // announces it — see services/demo/index.js.
+    const fallback = await resolveDemoFallback(config ?? {}, clientError).catch(() => null);
+    if (fallback) return { ...fallback, raw: null, isDemo: true };
+
+    return Promise.reject(clientError);
   }
 );
 

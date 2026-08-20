@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 
 import App from './App.jsx';
 import ErrorBoundary from './components/shared/ErrorBoundary.jsx';
+import DemoBanner from './components/shared/DemoBanner.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
 import './styles/theme.css';
 
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <AuthProvider>
           <App />
+          <DemoBanner />
         </AuthProvider>
         <Toaster
           position="top-right"
