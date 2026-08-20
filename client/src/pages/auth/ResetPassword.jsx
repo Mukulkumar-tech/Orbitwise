@@ -62,7 +62,7 @@ export default function ResetPassword() {
       footer={
         <p className="text-center text-sm text-navy-500">
           Link expired?{' '}
-          <Link to={PATHS.forgotPassword} className="font-semibold text-primary-600 hover:text-primary-700">
+          <Link to={PATHS.forgotPassword} className="font-semibold text-primary-700 hover:text-primary-800">
             Request a new one
           </Link>
         </p>

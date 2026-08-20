@@ -79,7 +79,7 @@ export default function Destinations({ destinations = [] }) {
                   </span>
                 </div>
 
-                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600">
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700">
                   Explore
                   <ArrowRight
                     className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"

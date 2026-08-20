@@ -18,6 +18,7 @@ const Select = forwardRef(function Select(
     error,
     options = [],
     placeholder,
+    children,
     required = false,
     className,
     containerClassName,
@@ -86,7 +87,12 @@ const Select = forwardRef(function Select(
               {placeholder}
             </option>
           )}
-          {options.map(renderOption)}
+          {/* The `options` prop is the documented API, but a component wrapping
+              <select> must also accept <option> children the way the native
+              element does. JSX explicit children silently override a spread
+              `children` prop, so dropping them produced empty dropdowns with no
+              error reported anywhere. */}
+          {options.length > 0 ? options.map(renderOption) : children}
         </select>
 
         <ChevronDown

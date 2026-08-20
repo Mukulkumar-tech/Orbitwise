@@ -225,11 +225,23 @@ Tailwind v4, CSS-first. All tokens live in [`client/src/styles/theme.css`](clien
 under `@theme` — there is no `tailwind.config.js`.
 
 ```
-Primary   #4F46E5   Electric Indigo — actions, links, match emphasis
-Navy      #0B1220   surfaces, headings, body text
-Success   #059669   verified, match scores        Warning  #D97706   deadlines
-Danger    #E11D48   errors, rejected              Canvas   #F8FAFC   page background
+Primary   #F97316   Orbitwise Orange  (--brand-orange)   actions, links, emphasis
+Navy      #0A2540   Orbitwise Navy    (--brand-navy)     surfaces, headings, text
+Gold      #FEB101   Orbitwise Gold    (--brand-yellow)   scholarship / funding
+Canvas    #F5F3FF   page background   (--brand-page)
+Success   #059669   verified, match scores
+Warning   #D97706   deadlines         Danger  #E11D48   errors, rejected
 ```
+
+Taken from the live site's own CSS custom properties, so the redesign is the same
+brand rather than a different one.
+
+**Contrast is measured, not assumed.** White on `#F97316` is **2.80:1 — a WCAG AA
+failure**; orange is simply a poor background for white text. Navy on that same
+orange is **5.54:1**, so filled buttons carry navy labels and hover *lightens*
+(6.87:1) instead of darkening. Text links use `primary-700` `#C2410C` (5.18:1).
+Gold fails as text at every step, so it is only ever a fill with a navy label
+(8.51:1).
 
 Inter for UI, Fraunces for display. Cards `rounded-2xl`, navy-tinted low-alpha shadows,
 micro-interactions 150–200 ms and section reveals 400–600 ms. One accent hue, two font families.

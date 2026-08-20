@@ -137,12 +137,12 @@ function HowItWorks() {
                 />
               )}
 
-              <span className="relative flex size-12 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-primary">
+              <span className="relative flex size-12 items-center justify-center rounded-2xl bg-primary-500 text-navy-950 shadow-primary">
                 <step.icon className="size-5.5" aria-hidden="true" />
               </span>
 
               <h3 className="mt-5 text-base font-semibold text-navy-950">
-                <span className="mr-1.5 font-mono text-sm text-primary-600">{index + 1}.</span>
+                <span className="mr-1.5 font-mono text-sm text-primary-700">{index + 1}.</span>
                 {step.title}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-navy-500">{step.body}</p>
@@ -221,7 +221,7 @@ function OrbitMatchExplainer() {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold tracking-wide text-primary-600 uppercase">Excellent match</p>
+                <p className="text-xs font-semibold tracking-wide text-primary-700 uppercase">Excellent match</p>
                 <h3 className="mt-1.5 text-lg leading-snug font-semibold text-navy-950">BSc Computer Science</h3>
                 <p className="mt-0.5 text-sm text-navy-500">University of Auckland · New Zealand</p>
               </div>
@@ -308,7 +308,7 @@ function WhyOrbitwise() {
         >
           {REASONS.map((reason) => (
             <motion.div key={reason.title} variants={resolve(fadeUp, reduce)}>
-              <span className="flex size-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+              <span className="flex size-11 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
                 <reason.icon className="size-5" aria-hidden="true" />
               </span>
               <h3 className="mt-4 text-base font-semibold text-navy-950">{reason.title}</h3>

@@ -38,7 +38,7 @@ export default function Stepper({ steps = [], current = 0, onStepSelect, unlockA
                   aria-hidden="true"
                   className={cn(
                     'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-150',
-                    isComplete && 'bg-primary-600 text-white',
+                    isComplete && 'bg-primary-500 text-navy-950',
                     isCurrent && 'bg-primary-100 text-primary-700 ring-2 ring-primary-500',
                     !isComplete && !isCurrent && 'bg-navy-100 text-navy-400'
                   )}

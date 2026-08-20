@@ -4,7 +4,7 @@ import cn from '../../utils/cn.js';
 
 const STATE_STYLE = {
   complete: { ring: 'bg-success-600 text-white', line: 'bg-success-600', icon: Check, label: 'text-navy-900' },
-  current: { ring: 'bg-primary-600 text-white', line: 'bg-navy-200', icon: CircleDot, label: 'text-navy-900' },
+  current: { ring: 'bg-primary-500 text-navy-950', line: 'bg-navy-200', icon: CircleDot, label: 'text-navy-900' },
   rejected: { ring: 'bg-danger-600 text-white', line: 'bg-navy-200', icon: X, label: 'text-danger-700' },
   pending: { ring: 'bg-navy-100 text-navy-400', line: 'bg-navy-200', icon: Clock, label: 'text-navy-400' },
 };
@@ -40,7 +40,7 @@ export default function ApplicationTimeline({ stages = [], history = [], statusL
               </span>
               <div className="pt-1">
                 <p className={cn('text-sm font-semibold', style.label)}>{stage.label}</p>
-                {stage.state === 'current' && <p className="mt-0.5 text-xs text-primary-600">In progress</p>}
+                {stage.state === 'current' && <p className="mt-0.5 text-xs text-primary-700">In progress</p>}
               </div>
             </li>
           );

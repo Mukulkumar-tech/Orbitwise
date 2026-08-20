@@ -115,7 +115,7 @@ export default function StudentLayout() {
                   className={({ isActive }) =>
                     cn(
                       'flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors duration-150',
-                      isActive ? 'bg-primary-600 text-white' : 'bg-navy-50 text-navy-600'
+                      isActive ? 'bg-primary-500 text-navy-950' : 'bg-navy-50 text-navy-600'
                     )
                   }
                 >

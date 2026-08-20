@@ -58,7 +58,7 @@ export default function Login() {
       footer={
         <p className="text-center text-sm text-navy-500">
           New to Orbitwise?{' '}
-          <Link to={PATHS.register} className="font-semibold text-primary-600 hover:text-primary-700">
+          <Link to={PATHS.register} className="font-semibold text-primary-700 hover:text-primary-800">
             Create a free account
           </Link>
         </p>
@@ -92,7 +92,7 @@ export default function Login() {
           <div className="mt-2 flex justify-end">
             <Link
               to={PATHS.forgotPassword}
-              className="rounded text-sm font-medium text-navy-500 transition-colors duration-150 hover:text-primary-600"
+              className="rounded text-sm font-medium text-navy-500 transition-colors duration-150 hover:text-primary-800"
             >
               Forgot password?
             </Link>

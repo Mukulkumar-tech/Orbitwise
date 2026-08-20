@@ -47,7 +47,7 @@ export default class ErrorBoundary extends Component {
           <button
             type="button"
             onClick={this.handleReload}
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-500 px-5 py-3 text-sm font-semibold text-navy-950 transition-colors duration-150 hover:bg-primary-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             <RefreshCw className="size-4" aria-hidden="true" />
             Reload page

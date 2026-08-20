@@ -11,18 +11,21 @@ import Spinner from './Spinner.jsx';
  */
 
 const VARIANTS = {
+  // Navy label rather than white: white on the brand orange measures 2.80:1 and
+  // fails AA, while navy on it is 5.54:1. Hover *lightens* because dark-on-light
+  // fills gain contrast as the fill lightens (6.87:1 at primary-400).
   primary:
-    'bg-primary-600 text-white shadow-primary hover:bg-primary-700 active:bg-primary-800 disabled:bg-primary-300 disabled:shadow-none',
+    'bg-primary-500 text-navy-950 shadow-primary hover:bg-primary-400 active:bg-primary-600 disabled:bg-primary-200 disabled:text-navy-500 disabled:shadow-none',
   secondary:
     'bg-navy-950 text-white hover:bg-navy-800 active:bg-navy-900 disabled:bg-navy-300 disabled:text-white/70',
   outline:
     'border border-navy-200 bg-white text-navy-800 hover:border-navy-300 hover:bg-navy-50 active:bg-navy-100 disabled:border-navy-100 disabled:text-navy-300',
   ghost: 'text-navy-600 hover:bg-navy-100 hover:text-navy-900 active:bg-navy-200 disabled:text-navy-300',
   subtle:
-    'bg-primary-50 text-primary-700 hover:bg-primary-100 active:bg-primary-200 disabled:bg-navy-50 disabled:text-navy-300',
+    'bg-primary-50 text-primary-800 hover:bg-primary-100 active:bg-primary-200 disabled:bg-navy-50 disabled:text-navy-300',
   danger:
     'bg-danger-600 text-white hover:bg-danger-700 active:bg-danger-700 disabled:bg-danger-100 disabled:text-danger-500',
-  link: 'text-primary-600 underline-offset-4 hover:text-primary-700 hover:underline disabled:text-navy-300',
+  link: 'text-primary-700 underline-offset-4 hover:text-primary-800 hover:underline disabled:text-navy-300',
 };
 
 const SIZES = {

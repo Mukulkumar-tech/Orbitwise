@@ -208,7 +208,7 @@ export default function Onboarding({ mode = 'onboarding' }) {
     <>
       <div className="flex items-start justify-between gap-6">
         <div>
-          <p className="text-2xs font-semibold tracking-wide text-primary-600 uppercase">
+          <p className="text-2xs font-semibold tracking-wide text-primary-700 uppercase">
             Step {stepIndex + 1} of {STEPS.length} · {step.title}
           </p>
           <h1 className="mt-2 font-display text-2xl font-semibold tracking-[-0.03em] text-navy-950 sm:text-3xl">
@@ -221,7 +221,7 @@ export default function Onboarding({ mode = 'onboarding' }) {
           value={completion}
           size="lg"
           suffix="%"
-          className="hidden shrink-0 text-primary-600 sm:inline-flex"
+          className="hidden shrink-0 text-primary-700 sm:inline-flex"
           label={`Profile ${completion}% complete`}
         />
       </div>

@@ -183,26 +183,26 @@ export default function Contact() {
               <h2 className="text-base font-semibold text-navy-950">Reach us directly</h2>
               <ul className="mt-4 space-y-3 text-sm">
                 <li className="flex items-start gap-3">
-                  <Mail className="mt-0.5 size-4 shrink-0 text-primary-600" aria-hidden="true" />
-                  <a href="mailto:hello@orbitwise.dev" className="text-navy-700 hover:text-primary-700">
+                  <Mail className="mt-0.5 size-4 shrink-0 text-primary-700" aria-hidden="true" />
+                  <a href="mailto:hello@orbitwise.dev" className="text-navy-700 hover:text-primary-800">
                     hello@orbitwise.dev
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Phone className="mt-0.5 size-4 shrink-0 text-primary-600" aria-hidden="true" />
-                  <a href="tel:+919000000000" className="text-navy-700 hover:text-primary-700">
+                  <Phone className="mt-0.5 size-4 shrink-0 text-primary-700" aria-hidden="true" />
+                  <a href="tel:+919000000000" className="text-navy-700 hover:text-primary-800">
                     +91 90000 00000
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Clock className="mt-0.5 size-4 shrink-0 text-primary-600" aria-hidden="true" />
+                  <Clock className="mt-0.5 size-4 shrink-0 text-primary-700" aria-hidden="true" />
                   <span className="text-navy-700">Mon–Sat, 10am–7pm IST</span>
                 </li>
               </ul>
             </div>
 
             <div className="flex items-start gap-3 rounded-2xl bg-primary-50 p-5">
-              <MessageSquare className="mt-0.5 size-5 shrink-0 text-primary-600" aria-hidden="true" />
+              <MessageSquare className="mt-0.5 size-5 shrink-0 text-primary-700" aria-hidden="true" />
               <p className="text-sm leading-relaxed text-navy-700">
                 Already have a profile? Your counsellor can see your matched courses, which makes the first conversation
                 far more concrete.

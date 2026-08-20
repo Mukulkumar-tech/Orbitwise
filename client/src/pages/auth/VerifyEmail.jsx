@@ -107,7 +107,7 @@ export default function VerifyEmail() {
               link that 404s is worse than one that opens the user's mail app. */}
           <a
             href="mailto:support@orbitwise.dev"
-            className="font-semibold text-primary-600 hover:text-primary-700"
+            className="font-semibold text-primary-700 hover:text-primary-800"
           >
             Contact support
           </a>

@@ -126,7 +126,7 @@ export default function Applications() {
                     )}
                   </dl>
 
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600">
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700">
                     Open application
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                   </span>

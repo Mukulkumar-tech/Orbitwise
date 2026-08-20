@@ -92,7 +92,7 @@ export default function UniversityDetail() {
           <p className="mt-6 inline-flex items-center gap-2 text-sm text-navy-500">
             <MapPin className="size-4" aria-hidden="true" />
             {university.city}, {country.name} · living costs around {formatInr(country.livingCostPerYearInr)} a year
-            <Link to={PATHS.country(country.slug)} className="font-semibold text-primary-600 hover:text-primary-700">
+            <Link to={PATHS.country(country.slug)} className="font-semibold text-primary-700 hover:text-primary-800">
               Destination guide
             </Link>
           </p>
@@ -152,7 +152,7 @@ export default function UniversityDetail() {
                         </div>
                       </dl>
 
-                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600">
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700">
                         View course
                         <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                       </span>

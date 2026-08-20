@@ -47,7 +47,7 @@ export default function ForgotPassword() {
       >
         <div className="space-y-6">
           <div className="flex items-start gap-4 rounded-2xl bg-primary-50 p-5">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-primary-600">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-primary-700">
               <MailCheck className="size-5" aria-hidden="true" />
             </span>
             <div className="text-sm leading-relaxed text-navy-600">
@@ -78,7 +78,7 @@ export default function ForgotPassword() {
       footer={
         <p className="text-center text-sm text-navy-500">
           Remembered it?{' '}
-          <Link to={PATHS.login} className="font-semibold text-primary-600 hover:text-primary-700">
+          <Link to={PATHS.login} className="font-semibold text-primary-700 hover:text-primary-800">
             Back to sign in
           </Link>
         </p>

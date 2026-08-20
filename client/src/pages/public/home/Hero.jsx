@@ -16,7 +16,7 @@ function FloatingCard({ icon: Icon, label, value, className, delay, reduce }) {
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       className={`absolute hidden items-center gap-3 rounded-2xl bg-white/95 px-4 py-3 shadow-lg ring-1 ring-navy-950/5 backdrop-blur-sm md:flex ${className}`}
     >
-      <span className="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+      <span className="flex size-9 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
         <Icon className="size-4.5" aria-hidden="true" />
       </span>
       <span>

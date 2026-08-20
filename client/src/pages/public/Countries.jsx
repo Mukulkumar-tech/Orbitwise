@@ -97,7 +97,7 @@ export default function Countries() {
                       <td className="px-6 py-4 text-right">
                         <Link
                           to={PATHS.country(country.slug)}
-                          className="inline-flex items-center gap-1.5 rounded-lg font-semibold text-primary-600 transition-colors hover:text-primary-700"
+                          className="inline-flex items-center gap-1.5 rounded-lg font-semibold text-primary-700 transition-colors hover:text-primary-800"
                         >
                           Explore
                           <ArrowRight className="size-4" aria-hidden="true" />

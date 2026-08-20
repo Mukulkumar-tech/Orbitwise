@@ -47,7 +47,15 @@ export default function ScholarshipCard({ scholarship, className }) {
         )}
       </div>
 
-      <p className="mt-4 font-display text-xl font-semibold tracking-[-0.01em] text-navy-950">{awardLabel(award)}</p>
+      {/* The brand's gold, used as a fill rather than as text: gold reads at only
+          3.98:1 on white even at its darkest step, but navy on gold is 8.51:1.
+          A filled pill also makes the money the first thing the eye lands on,
+          which is the right emphasis on a funding card. */}
+      <p className="mt-4">
+        <span className="inline-flex items-center rounded-lg bg-gold-500 px-2.5 py-1 font-display text-xl font-semibold tracking-[-0.01em] text-navy-950">
+          {awardLabel(award)}
+        </span>
+      </p>
       {scholarship.coverage?.length > 0 && (
         <p className="mt-1 text-xs text-navy-500">Covers {scholarship.coverage.join(' · ').toLowerCase()}</p>
       )}

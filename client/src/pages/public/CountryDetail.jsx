@@ -109,7 +109,7 @@ export default function CountryDetail() {
                     {level.count} course{level.count === 1 ? '' : 's'}
                   </p>
                   <p className="mt-3 text-sm text-navy-600">From {formatInr(level.fromInr)}/yr</p>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600">
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700">
                     Browse
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                   </span>
@@ -152,7 +152,7 @@ export default function CountryDetail() {
                 <Link
                   key={entry.field}
                   to={`${PATHS.courses}?countryCode=${country.code}&field=${entry.field}`}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-navy-700 shadow-sm transition-colors hairline hover:bg-primary-50 hover:text-primary-700"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-navy-700 shadow-sm transition-colors hairline hover:bg-primary-50 hover:text-primary-800"
                 >
                   {fieldLabel(entry.field)}
                   <span className="text-xs text-navy-400">{entry.count}</span>

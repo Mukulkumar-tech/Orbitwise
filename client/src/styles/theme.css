@@ -30,34 +30,55 @@
   --text-display-xl--line-height: 1;
   --text-display-xl--letter-spacing: -0.036em;
 
-  /* ─── Primary · Electric Indigo ─────────────────────────────────────────
-     Actions, links, active states, match emphasis. Exactly one accent hue.   */
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
-  --color-primary-950: #1e1b4b;
+  /* ─── Primary · Orbitwise Orange ────────────────────────────────────────
+     Taken from the live site: --brand-orange #f97316 with --brand-orange hover
+     #ea580c hover. Actions, links, active states and match emphasis.
+
+     Contrast note, measured rather than assumed: white on #f97316 is 2.80:1
+     and fails WCAG AA outright — orange is a poor background for white text.
+     Navy #0a2540 on the same orange is 5.54:1 and passes, so filled buttons
+     carry dark labels, and text links use primary-700 (#c2410c, 5.18:1 on
+     white) rather than the raw brand shade. Full brand fidelity, no a11y debt. */
+  --color-primary-50: #fff7ed;
+  --color-primary-100: #ffedd5;
+  --color-primary-200: #fed7aa;
+  --color-primary-300: #fdba74;
+  --color-primary-400: #fb923c;
+  --color-primary-500: #f97316;
+  --color-primary-600: #ea580c;
+  --color-primary-700: #c2410c;
+  --color-primary-800: #9a3412;
+  --color-primary-900: #7c2d12;
+  --color-primary-950: #431407;
+
+  /* ─── Secondary · Orbitwise Gold (--brand-yellow #feb101) ───────────────
+     The brand’s second accent. Used for scholarship and funding emphasis,
+     where a distinct-but-warm colour reads as opportunity rather than alarm. */
+  --color-gold-50: #fffaeb;
+  --color-gold-100: #fef2c7;
+  --color-gold-200: #fee489;
+  --color-gold-300: #ffd24d;
+  --color-gold-400: #ffc11f;
+  --color-gold-500: #feb101;
+  --color-gold-600: #d99000;
+  --color-gold-700: #b37100;
+  --color-gold-800: #8f5900;
+  --color-gold-900: #6b4200;
 
   /* ─── Navy · surfaces, headings, body text ──────────────────────────────
-     Custom ramp rather than Tailwind slate: cooler and deeper, so dark
-     sections read as premium rather than merely grey.                        */
-  --color-navy-50: #f5f7fa;
-  --color-navy-100: #e9edf3;
-  --color-navy-200: #ced6e2;
-  --color-navy-300: #a6b3c7;
-  --color-navy-400: #7688a3;
-  --color-navy-500: #556880;
-  --color-navy-600: #3f5068;
-  --color-navy-700: #2c3a4e;
-  --color-navy-800: #1b2534;
-  --color-navy-900: #111a26;
-  --color-navy-950: #0b1220;
+     Ramp re-anchored so 950 lands exactly on the live site’s --brand-navy
+     #0a2540, with --brand-muted #64748b sitting at the 500 step.            */
+  --color-navy-50: #f5f8fb;
+  --color-navy-100: #e8eff6;
+  --color-navy-200: #ccdbe9;
+  --color-navy-300: #a3bcd6;
+  --color-navy-400: #7295bd;
+  --color-navy-500: #64748b;
+  --color-navy-600: #345885;
+  --color-navy-700: #26436a;
+  --color-navy-800: #193352;
+  --color-navy-900: #0f2a45;
+  --color-navy-950: #0a2540;
 
   /* ─── Semantic ──────────────────────────────────────────────────────────
      Named by meaning, not colour, so a palette change never means a find-and-
@@ -110,7 +131,7 @@
   --color-info-700: #1d4ed8;
 
   /* Page background vs card surface — the whole layout rests on this pair. */
-  --color-canvas: #f8fafc;
+  --color-canvas: #f5f3ff;
   --color-surface: #ffffff;
 
   /* ─── Radius ────────────────────────────────────────────────────────────
@@ -125,14 +146,14 @@
   /* ─── Shadow ────────────────────────────────────────────────────────────
      Navy-tinted and low-alpha. Pure-black shadows are the fastest way to make
      a premium interface look cheap.                                          */
-  --shadow-xs: 0 1px 2px 0 rgb(11 18 32 / 0.04);
-  --shadow-sm: 0 1px 3px 0 rgb(11 18 32 / 0.06), 0 1px 2px -1px rgb(11 18 32 / 0.04);
-  --shadow-md: 0 4px 12px -2px rgb(11 18 32 / 0.07), 0 2px 4px -2px rgb(11 18 32 / 0.04);
-  --shadow-lg: 0 12px 24px -6px rgb(11 18 32 / 0.09), 0 4px 8px -4px rgb(11 18 32 / 0.05);
-  --shadow-xl: 0 24px 48px -12px rgb(11 18 32 / 0.14), 0 8px 16px -8px rgb(11 18 32 / 0.06);
-  --shadow-2xl: 0 40px 80px -20px rgb(11 18 32 / 0.2);
-  --shadow-ring: 0 0 0 1px rgb(11 18 32 / 0.06);
-  --shadow-primary: 0 8px 24px -6px rgb(79 70 229 / 0.35);
+  --shadow-xs: 0 1px 2px 0 rgb(10 37 64 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(10 37 64 / 0.06), 0 1px 2px -1px rgb(10 37 64 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(10 37 64 / 0.07), 0 2px 4px -2px rgb(10 37 64 / 0.04);
+  --shadow-lg: 0 12px 24px -6px rgb(10 37 64 / 0.09), 0 4px 8px -4px rgb(10 37 64 / 0.05);
+  --shadow-xl: 0 24px 48px -12px rgb(10 37 64 / 0.14), 0 8px 16px -8px rgb(10 37 64 / 0.06);
+  --shadow-2xl: 0 40px 80px -20px rgb(10 37 64 / 0.2);
+  --shadow-ring: 0 0 0 1px rgb(10 37 64 / 0.06);
+  --shadow-primary: 0 8px 24px -6px rgb(249 115 22 / 0.32);
 
   /* ─── Motion ────────────────────────────────────────────────────────────
      Micro-interactions 150–200ms; section reveals 400–600ms. Nothing longer:

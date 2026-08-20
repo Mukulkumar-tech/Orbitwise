@@ -122,7 +122,7 @@ export default function Compare() {
 
       {recommended && (
         <div className="mt-6 flex items-start gap-3 rounded-2xl bg-primary-50 p-5">
-          <Crown className="mt-0.5 size-5 shrink-0 text-primary-600" aria-hidden="true" />
+          <Crown className="mt-0.5 size-5 shrink-0 text-primary-700" aria-hidden="true" />
           <div>
             <p className="text-sm font-semibold text-navy-950">
               Best overall: {items.find((item) => item.slug === recommended.slug)?.title}
@@ -143,7 +143,7 @@ export default function Compare() {
               {items.map((course) => (
                 <th key={course.slug} scope="col" className="px-5 py-4 text-left align-top">
                   <span className="flex items-start justify-between gap-2">
-                    <Link to={PATHS.course(course.slug)} className="text-sm leading-snug font-semibold text-navy-950 hover:text-primary-700">
+                    <Link to={PATHS.course(course.slug)} className="text-sm leading-snug font-semibold text-navy-950 hover:text-primary-800">
                       {course.title}
                     </Link>
                     <button

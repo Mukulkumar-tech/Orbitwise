@@ -44,7 +44,7 @@ export default function BudgetStep({ values, errors, set }) {
               key={preset}
               type="button"
               onClick={() => set('budgetAnnualInr', String(preset))}
-              className="rounded-full border border-navy-200 px-3 py-1 text-xs font-semibold text-navy-600 transition-colors duration-150 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700"
+              className="rounded-full border border-navy-200 px-3 py-1 text-xs font-semibold text-navy-600 transition-colors duration-150 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-800"
             >
               {formatInr(preset)}
             </button>
@@ -67,7 +67,7 @@ export default function BudgetStep({ values, errors, set }) {
           type="checkbox"
           checked={values.needsScholarship}
           onChange={(event) => set('needsScholarship', event.target.checked)}
-          className="mt-0.5 size-4.5 shrink-0 rounded border-navy-300 text-primary-600 accent-primary-600"
+          className="mt-0.5 size-4.5 shrink-0 rounded border-navy-300 text-primary-700 accent-primary-600"
         />
         <span>
           <span className="block text-sm font-semibold text-navy-900">

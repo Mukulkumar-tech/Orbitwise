@@ -137,7 +137,7 @@ export default function Dashboard() {
             value={completion.percent}
             size="sm"
             suffix="%"
-            className={completion.percent === 100 ? 'text-success-600' : 'text-primary-600'}
+            className={completion.percent === 100 ? 'text-success-600' : 'text-primary-700'}
             label={`Profile ${completion.percent}% complete`}
           />
           <span>
@@ -248,7 +248,7 @@ export default function Dashboard() {
       {guidance.actions?.length > 0 && (
         <section className="rounded-2xl bg-surface p-6 shadow-sm hairline md:p-7">
           <h2 className="flex items-center gap-2 text-base font-semibold text-navy-950">
-            <ListChecks className="size-4.5 text-primary-600" aria-hidden="true" />
+            <ListChecks className="size-4.5 text-primary-700" aria-hidden="true" />
             Your next steps
           </h2>
 
@@ -264,7 +264,7 @@ export default function Dashboard() {
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-navy-900">
                     {action.step ? (
-                      <Link to={stepLink(action.step)} className="rounded hover:text-primary-700 hover:underline">
+                      <Link to={stepLink(action.step)} className="rounded hover:text-primary-800 hover:underline">
                         {action.label}
                       </Link>
                     ) : (
