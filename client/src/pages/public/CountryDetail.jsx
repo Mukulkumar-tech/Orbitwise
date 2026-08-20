@@ -74,7 +74,7 @@ export default function CountryDetail() {
             accommodation outside the most expensive city.
           </p>
 
-          <dl className="mt-7 grid gap-4 sm:grid-cols-3">
+          <dl className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
               { icon: Wallet, label: 'Tuition / year', value: `${formatInr(country.tuitionRangeInr.min)}–${formatInr(country.tuitionRangeInr.max)}` },
               { icon: MapPin, label: 'Living / year', value: formatInr(country.livingCostPerYearInr) },
@@ -97,7 +97,7 @@ export default function CountryDetail() {
         {byDegreeLevel.length > 0 && (
           <section className="mt-14">
             <h2 className="text-xl font-semibold text-navy-950">What you can study</h2>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {byDegreeLevel.map((level) => (
                 <Link
                   key={level.degreeLevel}
@@ -122,7 +122,7 @@ export default function CountryDetail() {
         {/* ─── Work rights ────────────────────────────────────────────── */}
         <section className="mt-14 rounded-2xl bg-navy-950 p-6 md:p-8">
           <h2 className="text-lg font-semibold text-white">Working during and after study</h2>
-          <dl className="mt-6 grid gap-6 sm:grid-cols-3">
+          <dl className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
               { icon: Briefcase, label: 'During study', value: `${country.workRights.hoursPerWeekDuringStudy} hrs / week` },
               { icon: Clock, label: 'After graduation', value: `${country.workRights.postStudyWorkYears} year${country.workRights.postStudyWorkYears === 1 ? '' : 's'}` },
@@ -171,7 +171,7 @@ export default function CountryDetail() {
               </Button>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {universities.map((university) => (
                 <Link
                   key={university.slug}

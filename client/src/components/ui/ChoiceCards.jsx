@@ -152,7 +152,7 @@ export default function ChoiceCards({
       </div>
 
       {error && (
-        <p id={errorId} role="alert" className="mt-2 text-sm text-danger-600">
+        <p id={errorId} role="alert" className="mt-2 text-sm text-danger-700">
           {error}
         </p>
       )}

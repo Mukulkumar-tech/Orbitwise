@@ -147,7 +147,7 @@ export default function Matches() {
             event.preventDefault();
             setFilter({ q: searchDraft.trim() });
           }}
-          className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+          className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4"
         >
           <Input
             label="Search"
@@ -241,7 +241,7 @@ export default function Matches() {
         />
       ) : (
         <>
-          <div className="grid gap-5 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             {items.map((course) => (
               <CourseCard
                 key={course._id}

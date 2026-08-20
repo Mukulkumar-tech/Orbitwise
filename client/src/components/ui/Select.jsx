@@ -54,7 +54,7 @@ const Select = forwardRef(function Select(
         <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-navy-800">
           {label}
           {required && (
-            <span className="ml-0.5 text-danger-600" aria-hidden="true">
+            <span className="ml-0.5 text-danger-700" aria-hidden="true">
               *
             </span>
           )}
@@ -102,7 +102,7 @@ const Select = forwardRef(function Select(
       </div>
 
       {error ? (
-        <p id={errorId} role="alert" className="mt-1.5 flex items-start gap-1.5 text-sm text-danger-600">
+        <p id={errorId} role="alert" className="mt-1.5 flex items-start gap-1.5 text-sm text-danger-700">
           <AlertCircle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
           {error}
         </p>

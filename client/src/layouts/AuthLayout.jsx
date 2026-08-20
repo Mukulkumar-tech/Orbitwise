@@ -109,7 +109,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-white">{propTitle}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-navy-400">{body}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-navy-300">{body}</p>
                 </div>
               </motion.li>
             ))}
@@ -126,7 +126,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
             ].map(([value, label]) => (
               <div key={label}>
                 <p className="text-2xl font-semibold tracking-[-0.02em] text-white">{value}</p>
-                <p className="mt-0.5 text-xs font-medium tracking-wide text-navy-400 uppercase">{label}</p>
+                <p className="mt-0.5 text-xs font-medium tracking-wide text-navy-300 uppercase">{label}</p>
               </div>
             ))}
           </motion.div>

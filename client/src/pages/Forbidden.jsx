@@ -17,11 +17,11 @@ export default function Forbidden() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-canvas px-5">
       <div className="w-full max-w-md text-center">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-warning-50 text-warning-600">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-warning-50 text-warning-700">
           <ShieldOff className="size-7" aria-hidden="true" />
         </div>
 
-        <p className="mt-6 font-mono text-sm font-semibold tracking-widest text-warning-600">403</p>
+        <p className="mt-6 font-mono text-sm font-semibold tracking-widest text-warning-700">403</p>
         <h1 className="mt-2 font-display text-3xl font-semibold text-navy-950">Not your door</h1>
         <p className="mt-3 text-base leading-relaxed text-navy-500">
           {isAuthenticated

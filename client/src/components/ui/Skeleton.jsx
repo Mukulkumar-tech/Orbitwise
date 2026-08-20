@@ -56,7 +56,7 @@ export function SkeletonCard({ className }) {
 /** Grid of card placeholders, for list and search results. */
 export function SkeletonGrid({ count = 6, className }) {
   return (
-    <div role="status" aria-live="polite" className={cn('grid gap-5 sm:grid-cols-2 xl:grid-cols-3', className)}>
+    <div role="status" aria-live="polite" className={cn('grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3', className)}>
       {Array.from({ length: count }, (_, index) => (
         <SkeletonCard key={index} />
       ))}

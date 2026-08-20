@@ -85,14 +85,14 @@ export default function Dashboard() {
     return (
       <div className="space-y-8">
         <SkeletonText lines={2} className="max-w-md" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, index) => (
             <div key={index} className="rounded-2xl bg-surface p-5 shadow-sm hairline">
               <SkeletonText lines={2} />
             </div>
           ))}
         </div>
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <SkeletonCard />
           <SkeletonCard />
         </div>
@@ -137,7 +137,7 @@ export default function Dashboard() {
             value={completion.percent}
             size="sm"
             suffix="%"
-            className={completion.percent === 100 ? 'text-success-600' : 'text-primary-700'}
+            className={completion.percent === 100 ? 'text-success-700' : 'text-primary-700'}
             label={`Profile ${completion.percent}% complete`}
           />
           <span>
@@ -215,7 +215,7 @@ export default function Dashboard() {
       )}
 
       {/* ─── Numbers ──────────────────────────────────────────────────────── */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile
           icon={Target}
           tone="primary"
@@ -334,7 +334,7 @@ export default function Dashboard() {
             }
           />
         ) : (
-          <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
             {matches.map((course) => (
               <CourseCard
                 key={course._id}

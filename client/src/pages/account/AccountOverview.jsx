@@ -106,7 +106,7 @@ export default function AccountOverview() {
             </div>
           </div>
 
-          <dl className="mt-8 grid gap-x-8 gap-y-5 border-t border-navy-100 pt-6 sm:grid-cols-2">
+          <dl className="mt-8 grid grid-cols-1 gap-x-8 gap-y-5 border-t border-navy-100 pt-6 sm:grid-cols-2">
             {[
               ['Member since', formatDate(user.createdAt)],
               ['Last sign-in', formatDate(user.lastLogin)],

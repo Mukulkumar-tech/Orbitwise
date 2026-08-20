@@ -71,7 +71,7 @@ export default function UniversityDetail() {
       </PageHero>
 
       <div className="container-page py-14 md:py-20">
-        <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Award, label: 'World ranking', value: university.worldRanking ? `#${university.worldRanking}` : 'Not published' },
             { icon: Users, label: 'Acceptance rate', value: university.acceptanceRate != null ? `${university.acceptanceRate}%` : '—' },
@@ -119,7 +119,7 @@ export default function UniversityDetail() {
                 <h3 className="text-sm font-semibold tracking-wide text-navy-500 uppercase">
                   {degreeLabel(level)} · {group.length}
                 </h3>
-                <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
                   {group.map((course) => (
                     <Link
                       key={course.slug}

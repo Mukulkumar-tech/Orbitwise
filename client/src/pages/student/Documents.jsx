@@ -111,7 +111,7 @@ export default function Documents() {
         <span
           className={cn(
             'flex size-10 shrink-0 items-center justify-center rounded-xl',
-            item.status === 'verified' ? 'bg-success-50 text-success-600' : 'bg-navy-100 text-navy-500'
+            item.status === 'verified' ? 'bg-success-50 text-success-700' : 'bg-navy-100 text-navy-500'
           )}
         >
           <Icon className="size-5" aria-hidden="true" />
@@ -121,7 +121,7 @@ export default function Documents() {
           <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-navy-950">
             {item.label}
             {item.required && (
-              <span className="text-2xs font-semibold tracking-wide text-danger-600 uppercase">Required</span>
+              <span className="text-2xs font-semibold tracking-wide text-danger-700 uppercase">Required</span>
             )}
           </p>
           {item.document ? (
@@ -176,7 +176,7 @@ export default function Documents() {
               size="sm"
               aria-label={`Remove ${item.label}`}
               onClick={() => handleDelete(item)}
-              className="text-danger-600 hover:bg-danger-50"
+              className="text-danger-700 hover:bg-danger-50"
             >
               <Trash2 className="size-4" aria-hidden="true" />
             </Button>

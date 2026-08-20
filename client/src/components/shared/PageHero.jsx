@@ -20,7 +20,7 @@ export default function PageHero({ eyebrow, title, description, breadcrumbs = []
       <div className="container-page relative pt-12 pb-16 md:pt-16 md:pb-20">
         {breadcrumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-6">
-            <ol className="flex flex-wrap items-center gap-1.5 text-sm text-navy-400">
+            <ol className="flex flex-wrap items-center gap-1.5 text-sm text-navy-300">
               {breadcrumbs.map((crumb, index) => (
                 <li key={crumb.label} className="flex items-center gap-1.5">
                   {index > 0 && <ChevronRight className="size-3.5 shrink-0" aria-hidden="true" />}

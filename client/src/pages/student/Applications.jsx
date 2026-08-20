@@ -31,7 +31,7 @@ export default function Applications() {
       </header>
 
       {stats && stats.total > 0 && (
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatTile label="Total" value={stats.total} />
           <StatTile label="In progress" value={stats.active} tone="warning" />
           <StatTile label="With university" value={stats.inProgress} tone="info" />

@@ -36,11 +36,16 @@ function SortHeader({ field, label, sort, onSort, className }) {
   const Icon = descending ? ArrowDown : ArrowUp;
 
   return (
-    <th scope="col" className={cn('px-4 py-3 text-left', className)}>
+    <th
+      scope="col"
+      // On the th, not the button: aria-sort describes the column, and on a
+      // button it is an unsupported attribute that is simply dropped.
+      aria-sort={active ? (descending ? 'descending' : 'ascending') : 'none'}
+      className={cn('px-4 py-3 text-left', className)}
+    >
       <button
         type="button"
         onClick={() => onSort(active && descending ? field : `-${field}`)}
-        aria-sort={active ? (descending ? 'descending' : 'ascending') : 'none'}
         className="inline-flex items-center gap-1 rounded font-semibold text-navy-600 transition-colors hover:text-navy-900 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none"
       >
         {label}

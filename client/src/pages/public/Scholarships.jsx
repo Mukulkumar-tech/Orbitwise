@@ -91,7 +91,7 @@ export default function Scholarships() {
           </Alert>
         )}
 
-        <div className="grid gap-4 rounded-2xl bg-surface p-5 shadow-sm hairline sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 rounded-2xl bg-surface p-5 shadow-sm hairline sm:grid-cols-3">
           <Select label="Destination" value={filters.countryCode} onChange={(e) => update('countryCode', e.target.value)}>
             <option value="">All destinations</option>
             {(countries ?? []).map((country) => (
@@ -123,7 +123,7 @@ export default function Scholarships() {
         </p>
 
         {isLoading && (
-          <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <Skeleton key={index} className="h-80" rounded="rounded-2xl" />
             ))}
@@ -148,7 +148,7 @@ export default function Scholarships() {
 
         {items.length > 0 && (
           <>
-            <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
               {items.map((scholarship) => (
                 <ScholarshipCard key={scholarship.slug} scholarship={scholarship} />
               ))}

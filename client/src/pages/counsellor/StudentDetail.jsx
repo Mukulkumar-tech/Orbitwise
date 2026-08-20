@@ -75,7 +75,7 @@ export default function CounsellorStudentDetail() {
       <div>
         <Skeleton className="h-8 w-40" />
         <Skeleton className="mt-6 h-28" rounded="rounded-2xl" />
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Skeleton className="h-72" rounded="rounded-2xl" />
           <Skeleton className="h-72 lg:col-span-2" rounded="rounded-2xl" />
         </div>
@@ -130,7 +130,7 @@ export default function CounsellorStudentDetail() {
         </div>
       </header>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* ─── Profile facts ─────────────────────────────────────────────── */}
         <section className="rounded-2xl bg-surface p-6 shadow-sm hairline">
           <h2 className="text-base font-semibold text-navy-950">Profile</h2>

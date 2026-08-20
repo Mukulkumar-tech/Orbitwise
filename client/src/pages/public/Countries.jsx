@@ -38,7 +38,7 @@ export default function Countries() {
 
       <div className="container-page py-14 md:py-20">
         {isLoading && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <Skeleton key={index} className="h-64" rounded="rounded-2xl" />
             ))}
@@ -110,7 +110,7 @@ export default function Countries() {
             </div>
 
             {/* ─── Mobile cards ──────────────────────────────────────── */}
-            <div className="grid gap-5 sm:grid-cols-2 lg:hidden">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:hidden">
               {countries.map((country) => (
                 <Link
                   key={country.code}

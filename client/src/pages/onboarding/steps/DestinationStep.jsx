@@ -13,7 +13,7 @@ import { formatInr } from '../../../constants/domain.js';
 export default function DestinationStep({ values, errors, set, countries = [], isLoading = false }) {
   if (isLoading) {
     return (
-      <div className="grid gap-2.5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         {Array.from({ length: 6 }, (_, index) => (
           <div key={index} className="rounded-xl border border-navy-100 p-4">
             <SkeletonText lines={2} />

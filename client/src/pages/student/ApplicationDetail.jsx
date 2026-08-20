@@ -120,7 +120,7 @@ export default function ApplicationDetail() {
         </Alert>
       )}
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <section className="rounded-2xl bg-surface p-6 shadow-sm hairline">
             <h2 className="text-base font-semibold text-navy-950">Progress</h2>

@@ -124,7 +124,7 @@ function HowItWorks() {
           whileInView="visible"
           viewport={inView}
           variants={staggerParent(0.08)}
-          className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+          className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
         >
           {STEPS.map((step, index) => (
             <motion.li key={step.title} variants={resolve(fadeUp, reduce)} className="relative">
@@ -176,7 +176,7 @@ function OrbitMatchExplainer() {
         className="pointer-events-none absolute inset-x-0 hidden justify-center overflow-hidden lg:flex"
       />
       <div className="container-page">
-        <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div>
             <SectionHeading
               align="left"
@@ -240,7 +240,7 @@ function OrbitMatchExplainer() {
                 'New Zealand is one of your preferred destinations',
               ].map((reason) => (
                 <li key={reason} className="flex items-start gap-2.5 text-sm text-navy-700">
-                  <BadgeCheck className="mt-0.5 size-4 shrink-0 text-success-600" aria-hidden="true" />
+                  <BadgeCheck className="mt-0.5 size-4 shrink-0 text-success-700" aria-hidden="true" />
                   {reason}
                 </li>
               ))}
@@ -304,7 +304,7 @@ function WhyOrbitwise() {
           whileInView="visible"
           viewport={inView}
           variants={staggerParent(0.05)}
-          className="mt-14 grid gap-x-10 gap-y-11 md:grid-cols-2 lg:grid-cols-3"
+          className="mt-14 grid grid-cols-1 gap-x-10 gap-y-11 md:grid-cols-2 lg:grid-cols-3"
         >
           {REASONS.map((reason) => (
             <motion.div key={reason.title} variants={resolve(fadeUp, reduce)}>

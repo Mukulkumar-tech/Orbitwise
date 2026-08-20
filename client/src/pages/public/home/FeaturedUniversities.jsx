@@ -26,7 +26,7 @@ export default function FeaturedUniversities({ universities = [] }) {
           whileInView="visible"
           viewport={inView}
           variants={staggerParent(0.06)}
-          className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           {universities.map((university) => (
             <motion.article key={university.slug} variants={resolve(fadeUp, reduce)}>

@@ -31,7 +31,7 @@ export default function MatchBreakdown({ breakdown = [], className }) {
                   <CircleHelp className="size-3.5 text-navy-400" aria-label="Not enough information yet" />
                 )}
                 {item.watchout && (
-                  <TriangleAlert className="size-3.5 text-warning-600" aria-label="Needs planning" />
+                  <TriangleAlert className="size-3.5 text-warning-700" aria-label="Needs planning" />
                 )}
               </p>
               <p className="shrink-0 text-2xs font-semibold text-navy-500 tabular-nums">

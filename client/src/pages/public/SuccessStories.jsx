@@ -53,7 +53,7 @@ export default function SuccessStories() {
         </div>
 
         {isLoading && (
-          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <Skeleton key={index} className="h-72" rounded="rounded-2xl" />
             ))}
@@ -77,7 +77,7 @@ export default function SuccessStories() {
         )}
 
         {data && data.length > 0 && (
-          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {data.map((story) => (
               <StoryCard key={`${story.studentName}-${story.intakeYear}`} story={story} />
             ))}

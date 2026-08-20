@@ -124,7 +124,7 @@ export default function CostCalculator() {
           </Alert>
         )}
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
           {/* ─── Inputs ────────────────────────────────────────────── */}
           <section>
             <h2 className="text-lg font-semibold text-navy-950">Your numbers</h2>
@@ -136,7 +136,7 @@ export default function CostCalculator() {
               <div className="mt-6 space-y-6">
                 <div className="rounded-2xl bg-surface p-5 shadow-sm hairline">
                   <h3 className="text-sm font-semibold text-navy-950">Every year</h3>
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {ANNUAL_LINES.map(([key, label]) => (
                       <Input
                         key={key}
@@ -156,7 +156,7 @@ export default function CostCalculator() {
                   {/* Called out explicitly because charging these every year is the
                       most common way a cost estimate becomes needlessly frightening. */}
                   <p className="mt-1 text-xs text-navy-500">Paid once for the whole journey, not annually.</p>
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {ONE_TIME_LINES.map(([key, label]) => (
                       <Input
                         key={key}
@@ -171,7 +171,7 @@ export default function CostCalculator() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 rounded-2xl bg-surface p-5 shadow-sm hairline sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 rounded-2xl bg-surface p-5 shadow-sm hairline sm:grid-cols-2">
                   <Input
                     label="Programme length (months)"
                     type="number"
@@ -206,13 +206,13 @@ export default function CostCalculator() {
             {result && (
               <div className="mt-6 space-y-4">
                 <div className="rounded-2xl bg-navy-950 p-6">
-                  <p className="text-2xs font-semibold tracking-wide text-navy-400 uppercase">
+                  <p className="text-2xs font-semibold tracking-wide text-navy-300 uppercase">
                     Total for {result.years} year{result.years === 1 ? '' : 's'}
                   </p>
                   <p className="mt-2 font-display text-4xl font-semibold tracking-[-0.02em] text-white">
                     {formatInr(result.netTotal)}
                   </p>
-                  <p className="mt-1 font-mono text-xs text-navy-400">{formatInrExact(result.netTotal)}</p>
+                  <p className="mt-1 font-mono text-xs text-navy-300">{formatInrExact(result.netTotal)}</p>
 
                   {result.scholarship.applies && (
                     <p className="mt-4 rounded-xl bg-success-500/15 px-3 py-2 text-sm text-success-300">
@@ -228,7 +228,7 @@ export default function CostCalculator() {
                       ['Monthly living cost', result.monthlyLiving],
                     ].map(([label, value]) => (
                       <div key={label} className="flex justify-between gap-3">
-                        <dt className="text-navy-400">{label}</dt>
+                        <dt className="text-navy-300">{label}</dt>
                         <dd className="font-semibold text-white">{formatInr(value)}</dd>
                       </div>
                     ))}
@@ -244,9 +244,9 @@ export default function CostCalculator() {
                     )}
                   >
                     {result.budget.withinBudget ? (
-                      <Wallet className="mt-0.5 size-5 shrink-0 text-success-600" aria-hidden="true" />
+                      <Wallet className="mt-0.5 size-5 shrink-0 text-success-700" aria-hidden="true" />
                     ) : (
-                      <TriangleAlert className="mt-0.5 size-5 shrink-0 text-warning-600" aria-hidden="true" />
+                      <TriangleAlert className="mt-0.5 size-5 shrink-0 text-warning-700" aria-hidden="true" />
                     )}
                     <div>
                       <p

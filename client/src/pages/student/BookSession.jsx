@@ -132,7 +132,7 @@ export default function BookSession() {
     return (
       <div>
         <Skeleton className="h-8 w-56" />
-        <div className="mt-7 grid gap-4 sm:grid-cols-2">
+        <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-32" rounded="rounded-2xl" />
           ))}
@@ -170,7 +170,7 @@ export default function BookSession() {
           {/* ─── 1 · Who ──────────────────────────────────────────────────── */}
           <fieldset>
             <legend className="text-sm font-semibold text-navy-900">1 · Choose a counsellor</legend>
-            <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {counsellors.map((counsellor) => {
                 const isSelected = counsellor.userId === counsellorUserId;
                 return (
@@ -303,7 +303,7 @@ export default function BookSession() {
             <legend className="text-sm font-semibold text-navy-900">3 · What it’s about</legend>
 
             <div className="mt-3 rounded-2xl bg-surface p-5 shadow-sm hairline">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Select
                   label="Session type"
                   options={TYPE_OPTIONS}

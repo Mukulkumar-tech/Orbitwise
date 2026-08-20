@@ -80,7 +80,7 @@ export default function VerifyEmail() {
       <AuthLayout title="Email verified" subtitle={state.message}>
         <div className="space-y-6">
           <div className="flex items-start gap-4 rounded-2xl bg-success-50 p-5">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-success-600">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-success-700">
               <CheckCircle2 className="size-5" aria-hidden="true" />
             </span>
             <p className="text-sm leading-relaxed text-success-700">

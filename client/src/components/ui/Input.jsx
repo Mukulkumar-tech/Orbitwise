@@ -44,7 +44,7 @@ const Input = forwardRef(function Input(
           <label htmlFor={id} className="text-sm font-medium text-navy-800">
             {label}
             {required && (
-              <span className="ml-0.5 text-danger-600" aria-hidden="true">
+              <span className="ml-0.5 text-danger-700" aria-hidden="true">
                 *
               </span>
             )}
@@ -100,12 +100,12 @@ const Input = forwardRef(function Input(
         )}
 
         {success && !isPassword && (
-          <Check className="absolute top-1/2 right-3.5 size-4.5 -translate-y-1/2 text-success-600" aria-hidden="true" />
+          <Check className="absolute top-1/2 right-3.5 size-4.5 -translate-y-1/2 text-success-700" aria-hidden="true" />
         )}
       </div>
 
       {error ? (
-        <p id={errorId} role="alert" className="mt-1.5 flex items-start gap-1.5 text-sm text-danger-600">
+        <p id={errorId} role="alert" className="mt-1.5 flex items-start gap-1.5 text-sm text-danger-700">
           <AlertCircle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
           {error}
         </p>

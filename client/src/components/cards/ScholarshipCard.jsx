@@ -87,7 +87,7 @@ export default function ScholarshipCard({ scholarship, className }) {
         <ul className="mt-4 space-y-1.5 border-t border-navy-100 pt-4">
           {match.reasons.slice(0, 2).map((reason) => (
             <li key={reason} className="flex items-start gap-2 text-xs leading-relaxed text-navy-600">
-              <Check className="mt-0.5 size-3.5 shrink-0 text-success-600" aria-hidden="true" />
+              <Check className="mt-0.5 size-3.5 shrink-0 text-success-700" aria-hidden="true" />
               {reason}
             </li>
           ))}

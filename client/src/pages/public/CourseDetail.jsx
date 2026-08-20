@@ -71,10 +71,10 @@ export default function CourseDetail() {
       </PageHero>
 
       <div className="container-page py-14 md:py-20">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
           <div>
             {/* ─── Key facts ─────────────────────────────────────── */}
-            <dl className="grid gap-4 sm:grid-cols-2">
+            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {[
                 { icon: Coins, label: 'Tuition / year', value: `${formatInr(course.tuitionPerYearInr)}` },
                 { icon: Timer, label: 'Duration', value: formatDuration(course.durationMonths) },

@@ -79,7 +79,7 @@ export default function Universities() {
         </div>
 
         {isLoading && (
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <Skeleton key={index} className="h-52" rounded="rounded-2xl" />
             ))}
@@ -104,7 +104,7 @@ export default function Universities() {
 
         {items.length > 0 && (
           <>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((university) => (
                 <Link
                   key={university.slug}

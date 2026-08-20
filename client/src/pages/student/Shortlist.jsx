@@ -79,7 +79,7 @@ export default function Shortlist() {
         />
       ) : (
         <>
-          <section className="grid gap-4 sm:grid-cols-3">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <StatTile icon={Bookmark} tone="primary" label="Shortlisted" value={courses.length} hint="Cap is 20" />
             <StatTile
               label="Best match"
@@ -95,7 +95,7 @@ export default function Shortlist() {
             />
           </section>
 
-          <div className="grid gap-5 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             {courses.map((course) => (
               <CourseCard
                 key={course._id}

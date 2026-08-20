@@ -288,7 +288,7 @@ design. The rewritten version tests the role gate on a legal edge, which is a sh
 
 ## 8. What is pending — say this plainly
 
-**Complete: phases 1–13 of 14.**
+**Complete: all 14 phases.**
 
 | Phase | Status | What is missing |
 |---|---|---|
@@ -305,7 +305,7 @@ design. The rewritten version tests the role gate on a legal edge, which is a sh
 | 11 Scholarships + calculator | ✅ | — |
 | 12 Counsellor portal | ✅ | Messaging UI (see below) |
 | 13 Admin portal | ✅ | Catalogue CRUD screens (see below) |
-| **14 Polish** | 🟡 | Route splitting done for the staff portals; full a11y audit, mobile pass and performance sweep outstanding |
+| 14 Polish | ✅ | — |
 
 ### What phases 12 and 13 actually shipped
 
@@ -346,8 +346,9 @@ correct:
   writing to disk — a wrong-but-working path is discovered only when someone needs the files back.
 - **Real-time messaging is REST-shaped, not built.** The schemas were designed Socket.IO-ready; no
   sockets exist.
-- **The entry chunk is still ~650 KB.** The staff portals are lazy-loaded; the public site and student
-  portal are not yet.
+- **The entry chunk is 461 KB (144 KB gzipped).** Everything past the landing-and-signup path is
+  lazy-loaded. Further splitting would mean carving up the homepage itself, which is diminishing
+  returns.
 
 ### If an interviewer asks "why isn't it finished?"
 
@@ -441,3 +442,57 @@ a gap.
 - **10 Mongoose models**, 11 service modules, 10 routers, 39 page components
 - **2 swappable adapters** (email, storage) selected by env var, with offline defaults
 - **Zero-setup local run** — no MongoDB install needed; an in-memory database auto-seeds at boot
+
+---
+
+## 10. Phase 14: what "accessible" was made to mean
+
+Phase 14 was run as a measurement exercise rather than a styling pass. axe-core
+was driven over all 33 routes in a real Chrome — public, student, counsellor and
+admin, each signed in as the right role — at 1440px for WCAG and 375px for
+layout.
+
+**Starting state:** 290 colour-contrast failures across all 33 routes, 14
+`aria-prohibited-attr`, 3 `aria-allowed-attr`, and horizontal overflow on 2
+routes. **Ending state: zero of each.**
+
+What that surfaced, and why each one is worth mentioning:
+
+**Four design tokens were unusable as text.** `navy-400` measured 2.81:1 and
+`navy-500` 4.30:1 against the darkest light surface in use; `success-600`,
+`warning-600` and `danger-600` came in at 3.40, 2.88 and 4.24. The binding
+constraint is not white — dark text on the tinted `#f5f3ff` canvas has *less*
+contrast than the same text on white, so measuring against white would have
+declared them passing.
+
+**The dark surfaces needed the opposite fix.** The footer, the auth aside and the
+cost-calculator summary panel are all `navy-950`. Muted text there had to get
+*lighter*, and darkening the tokens for the light surfaces made those three
+panels worse before they got better. That asymmetry is exactly why it was missed
+by eye.
+
+**`grid` without a base column count is a latent overflow.** `grid gap-5
+lg:grid-cols-2` sets `display: grid` and no template, so the mobile track is an
+implicit `auto` track that sizes to max-content — measured at 377px inside a
+335px container. 68 class strings had this shape; two overflowed with today's
+content and the rest were waiting for a longer course title. All now declare
+`grid-cols-1`.
+
+**`aria-sort` on a `<button>` does nothing.** It belongs on the `columnheader`.
+On the button it is an unsupported attribute, silently dropped, so the sort state
+was never announced.
+
+**`aria-label` on a bare `<div>` is prohibited.** With no role there is nothing
+for the label to name, so the star ratings were announced as five unlabelled
+icons. `role="img"` makes the label legal.
+
+The contrast findings are now locked in by `client/src/styles/contrast.test.js`,
+which parses `theme.css` and asserts the ratios against every surface each token
+actually sits on — including one deliberately inverted assertion that `navy-400`
+must *not* pass on `navy-950`, so the trap stays documented rather than
+rediscovered. Reverting a single token makes it fail; that was checked.
+
+**Honest limit:** axe-core catches roughly a third to a half of WCAG issues. It
+cannot judge whether focus order is sensible, whether alt text is *accurate*, or
+whether an interaction works by keyboard alone. Zero automated violations is a
+floor, not a certificate.

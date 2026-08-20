@@ -46,7 +46,7 @@ export default function SystemStatus() {
 
           <div className="mt-6">
             {isLoading && (
-              <div role="status" aria-live="polite" className="grid gap-3 sm:grid-cols-2">
+              <div role="status" aria-live="polite" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {Array.from({ length: 4 }, (_, index) => (
                   <Skeleton key={index} className="h-16" rounded="rounded-xl" />
                 ))}
@@ -71,7 +71,7 @@ export default function SystemStatus() {
                   API reachable · uptime {health.uptimeSeconds}s · {health.environment}
                 </p>
 
-                <dl className="mt-5 grid gap-3 sm:grid-cols-2">
+                <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <StatusRow
                     icon={Database}
                     label="Database"

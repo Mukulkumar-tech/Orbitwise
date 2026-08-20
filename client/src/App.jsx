@@ -7,42 +7,51 @@ import { PATHS, ROLES } from './constants/routes.js';
 
 import PublicLayout from './layouts/PublicLayout.jsx';
 import Home from './pages/public/Home.jsx';
-import Countries from './pages/public/Countries.jsx';
-import CountryDetail from './pages/public/CountryDetail.jsx';
-import Universities from './pages/public/Universities.jsx';
-import UniversityDetail from './pages/public/UniversityDetail.jsx';
-import Courses from './pages/public/Courses.jsx';
-import CourseDetail from './pages/public/CourseDetail.jsx';
-import Scholarships from './pages/public/Scholarships.jsx';
-import CostCalculator from './pages/public/CostCalculator.jsx';
-import SuccessStories from './pages/public/SuccessStories.jsx';
-import Contact from './pages/public/Contact.jsx';
-import ContentPage from './pages/public/ContentPage.jsx';
 
-import SystemStatus from './pages/dev/SystemStatus.jsx';
 import Login from './pages/auth/Login.jsx';
 import Register from './pages/auth/Register.jsx';
-import ForgotPassword from './pages/auth/ForgotPassword.jsx';
-import ResetPassword from './pages/auth/ResetPassword.jsx';
-import VerifyEmail from './pages/auth/VerifyEmail.jsx';
-import AccountOverview from './pages/account/AccountOverview.jsx';
-import StudentLayout from './layouts/StudentLayout.jsx';
-import Onboarding from './pages/onboarding/Onboarding.jsx';
-import Dashboard from './pages/student/Dashboard.jsx';
-import Matches from './pages/student/Matches.jsx';
-import Shortlist from './pages/student/Shortlist.jsx';
-import Compare from './pages/student/Compare.jsx';
-import Applications from './pages/student/Applications.jsx';
-import Documents from './pages/student/Documents.jsx';
-import ApplicationDetail from './pages/student/ApplicationDetail.jsx';
-import Profile from './pages/student/Profile.jsx';
-import BookSession from './pages/student/BookSession.jsx';
-import Appointments from './pages/shared/Appointments.jsx';
 import { ADMIN_NAV, COUNSELLOR_NAV } from './layouts/portalNav.js';
 import Forbidden from './pages/Forbidden.jsx';
 import NotFound from './pages/NotFound.jsx';
 import RouteFallback from './components/shared/RouteFallback.jsx';
 
+
+/**
+ * Everything past the front door loads on demand.
+ *
+ * Eager above: the layout, the homepage and the two auth forms — the path a
+ * first-time visitor actually takes. A public visitor should not download the
+ * student portal to read a country guide, and a student should not download the
+ * staff portals at all (split separately below).
+ */
+const Countries = lazy(() => import('./pages/public/Countries.jsx'));
+const CountryDetail = lazy(() => import('./pages/public/CountryDetail.jsx'));
+const Universities = lazy(() => import('./pages/public/Universities.jsx'));
+const UniversityDetail = lazy(() => import('./pages/public/UniversityDetail.jsx'));
+const Courses = lazy(() => import('./pages/public/Courses.jsx'));
+const CourseDetail = lazy(() => import('./pages/public/CourseDetail.jsx'));
+const Scholarships = lazy(() => import('./pages/public/Scholarships.jsx'));
+const CostCalculator = lazy(() => import('./pages/public/CostCalculator.jsx'));
+const SuccessStories = lazy(() => import('./pages/public/SuccessStories.jsx'));
+const Contact = lazy(() => import('./pages/public/Contact.jsx'));
+const ContentPage = lazy(() => import('./pages/public/ContentPage.jsx'));
+const SystemStatus = lazy(() => import('./pages/dev/SystemStatus.jsx'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword.jsx'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword.jsx'));
+const VerifyEmail = lazy(() => import('./pages/auth/VerifyEmail.jsx'));
+const AccountOverview = lazy(() => import('./pages/account/AccountOverview.jsx'));
+const StudentLayout = lazy(() => import('./layouts/StudentLayout.jsx'));
+const Onboarding = lazy(() => import('./pages/onboarding/Onboarding.jsx'));
+const Dashboard = lazy(() => import('./pages/student/Dashboard.jsx'));
+const Matches = lazy(() => import('./pages/student/Matches.jsx'));
+const Shortlist = lazy(() => import('./pages/student/Shortlist.jsx'));
+const Compare = lazy(() => import('./pages/student/Compare.jsx'));
+const Applications = lazy(() => import('./pages/student/Applications.jsx'));
+const Documents = lazy(() => import('./pages/student/Documents.jsx'));
+const ApplicationDetail = lazy(() => import('./pages/student/ApplicationDetail.jsx'));
+const Profile = lazy(() => import('./pages/student/Profile.jsx'));
+const BookSession = lazy(() => import('./pages/student/BookSession.jsx'));
+const Appointments = lazy(() => import('./pages/shared/Appointments.jsx'));
 
 /**
  * The staff portals load on demand.

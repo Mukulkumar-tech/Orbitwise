@@ -43,7 +43,7 @@ export default function Hero({ stats }) {
         className="pointer-events-none absolute -bottom-56 -left-40 size-[34rem] rounded-full bg-primary-500/10 blur-3xl"
       />
 
-      <div className="container-page relative grid items-center gap-14 pt-16 pb-20 md:pt-20 md:pb-28 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+      <div className="container-page relative grid grid-cols-1 items-center gap-14 pt-16 pb-20 md:pt-20 md:pb-28 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
         <motion.div initial="hidden" animate="visible" variants={staggerParent(0.08)}>
           <motion.span
             variants={resolve(fadeUp, reduce)}

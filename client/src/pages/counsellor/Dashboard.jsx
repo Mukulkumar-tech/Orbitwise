@@ -47,7 +47,7 @@ export default function CounsellorDashboard() {
     return (
       <div>
         <Skeleton className="h-8 w-72" />
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-24" rounded="rounded-2xl" />
           ))}
@@ -78,7 +78,7 @@ export default function CounsellorDashboard() {
         </Badge>
       </header>
 
-      <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile icon={Users} label="Students" value={stats.students} />
         <StatTile
           icon={FileClock}
@@ -96,7 +96,7 @@ export default function CounsellorDashboard() {
       </div>
 
       {/* ─── Needs a decision ──────────────────────────────────────────── */}
-      <section className="mt-8 grid gap-6 lg:grid-cols-2">
+      <section className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-2xl bg-surface p-6 shadow-sm hairline">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-navy-950">Next appointments</h2>

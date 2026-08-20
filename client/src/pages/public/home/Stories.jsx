@@ -20,7 +20,7 @@ export function StoryCard({ story, className }) {
   return (
     <article className={`flex h-full flex-col rounded-2xl bg-surface p-6 shadow-sm hairline ${className ?? ''}`}>
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1" aria-label={`${story.rating} out of 5`}>
+        <div className="flex items-center gap-1" role="img" aria-label={`${story.rating} out of 5`}>
           {Array.from({ length: story.rating }, (_, index) => (
             <Star key={index} className="size-3.5 fill-warning-500 text-warning-500" aria-hidden="true" />
           ))}
@@ -73,7 +73,7 @@ export default function Stories({ testimonials = [] }) {
           whileInView="visible"
           viewport={inView}
           variants={staggerParent(0.07)}
-          className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+          className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
           {testimonials.slice(0, 6).map((story) => (
             <motion.div key={`${story.studentName}-${story.intakeYear}`} variants={resolve(fadeUp, reduce)}>

@@ -87,7 +87,7 @@ export default function Courses() {
         )}
 
         {/* ─── Filters ─────────────────────────────────────────────── */}
-        <div className="grid gap-4 rounded-2xl bg-surface p-5 shadow-sm hairline sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 rounded-2xl bg-surface p-5 shadow-sm hairline sm:grid-cols-3">
           <Select label="Destination" value={filters.countryCode} onChange={(e) => update('countryCode', e.target.value)}>
             <option value="">All destinations</option>
             {(countries ?? []).map((country) => (
@@ -128,7 +128,7 @@ export default function Courses() {
         </div>
 
         {isLoading && (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <Skeleton key={index} className="h-72" rounded="rounded-2xl" />
             ))}
@@ -153,7 +153,7 @@ export default function Courses() {
 
         {items.length > 0 && (
           <>
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {items.map((course) => (
                 <CourseCard key={course._id} course={course} />
               ))}

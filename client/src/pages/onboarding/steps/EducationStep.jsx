@@ -53,7 +53,7 @@ export default function EducationStep({ values, errors, set }) {
 
       {values.educationLevel && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Select
               label={isTertiary ? 'Grading system' : 'Marks system'}
               name="marksSystem"
@@ -80,7 +80,7 @@ export default function EducationStep({ values, errors, set }) {
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Select
               label="Stream"
               name="stream"
@@ -102,7 +102,7 @@ export default function EducationStep({ values, errors, set }) {
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               label={
                 ['class_11', 'class_12_pursuing', 'bachelors_pursuing'].includes(values.educationLevel)

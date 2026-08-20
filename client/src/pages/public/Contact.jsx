@@ -63,12 +63,12 @@ export default function Contact() {
       />
 
       <div className="container-page py-14 md:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
           {/* ─── Form ─────────────────────────────────────────────── */}
           <div>
             {submitted ? (
               <div className="rounded-2xl bg-surface p-8 shadow-md hairline">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-success-50 text-success-600">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-success-50 text-success-700">
                   <CheckCircle2 className="size-6" aria-hidden="true" />
                 </div>
                 <h2 className="mt-5 font-display text-2xl font-semibold text-navy-950">
@@ -93,7 +93,7 @@ export default function Contact() {
               <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
                 {formError && <Alert tone="danger">{formError}</Alert>}
 
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <Input label="Your name" leftIcon={User} required error={errors.name?.message} {...register('name')} />
                   <Input
                     label="Email"
@@ -105,7 +105,7 @@ export default function Contact() {
                   />
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <Input
                     label="Phone"
                     type="tel"
@@ -133,7 +133,7 @@ export default function Contact() {
                 <div>
                   <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-navy-800">
                     What would you like help with?
-                    <span className="ml-0.5 text-danger-600" aria-hidden="true">
+                    <span className="ml-0.5 text-danger-700" aria-hidden="true">
                       *
                     </span>
                   </label>
@@ -146,7 +146,7 @@ export default function Contact() {
                     {...register('message')}
                   />
                   {errors.message && (
-                    <p role="alert" className="mt-1.5 text-sm text-danger-600">
+                    <p role="alert" className="mt-1.5 text-sm text-danger-700">
                       {errors.message.message}
                     </p>
                   )}

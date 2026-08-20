@@ -66,12 +66,12 @@ export default function AdminDashboard() {
     return (
       <div>
         <Skeleton className="h-8 w-64" />
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }, (_, i) => (
             <Skeleton key={i} className="h-24" rounded="rounded-2xl" />
           ))}
         </div>
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-72" rounded="rounded-2xl" />
           ))}
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
         </Alert>
       )}
 
-      <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile icon={Users} label="Students" value={s.students} />
         <StatTile
           icon={UserPlus}
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
 
       {/* ─── Charts ──────────────────────────────────────────────────────── */}
       {charts.isLoading ? (
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
           {Array.from({ length: 6 }, (_, i) => (
             <Skeleton key={i} className="h-72" rounded="rounded-2xl" />
           ))}
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
           title="Couldn’t load the charts"
         />
       ) : (
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
           <ChartCard
             title="Student signups"
             subtitle="Last six months"

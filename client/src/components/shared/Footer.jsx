@@ -41,10 +41,10 @@ export default function Footer() {
   return (
     <footer className="bg-navy-950 text-navy-300">
       <div className="container-page py-16 md:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div className="max-w-sm">
             <Logo tone="light" />
-            <p className="mt-5 text-sm leading-relaxed text-navy-400">
+            <p className="mt-5 text-sm leading-relaxed text-navy-300">
               Orbitwise helps students discover, plan and complete their study-abroad journey — with matches based on
               your actual marks, budget and goals, not a brochure.
             </p>
@@ -69,7 +69,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="grid gap-10 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
             {COLUMNS.map((column) => (
               <nav key={column.title} aria-label={column.title}>
                 <h2 className="text-2xs font-semibold tracking-wider text-white uppercase">{column.title}</h2>
@@ -87,7 +87,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-7 text-xs text-navy-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-7 text-xs text-navy-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Orbitwise. Built as a portfolio demonstration.</p>
           <p>
             Tuition and living costs are indicative planning figures. Always confirm current fees with the university

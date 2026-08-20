@@ -3,9 +3,9 @@ import cn from '../../utils/cn.js';
 
 const TONES = {
   info: { wrap: 'border-info-100 bg-info-50 text-info-600', body: 'text-navy-700', icon: Info },
-  success: { wrap: 'border-success-100 bg-success-50 text-success-600', body: 'text-success-700', icon: CheckCircle2 },
-  warning: { wrap: 'border-warning-100 bg-warning-50 text-warning-600', body: 'text-warning-700', icon: TriangleAlert },
-  danger: { wrap: 'border-danger-100 bg-danger-50 text-danger-600', body: 'text-danger-700', icon: AlertCircle },
+  success: { wrap: 'border-success-100 bg-success-50 text-success-700', body: 'text-success-700', icon: CheckCircle2 },
+  warning: { wrap: 'border-warning-100 bg-warning-50 text-warning-700', body: 'text-warning-700', icon: TriangleAlert },
+  danger: { wrap: 'border-danger-100 bg-danger-50 text-danger-700', body: 'text-danger-700', icon: AlertCircle },
 };
 
 /**

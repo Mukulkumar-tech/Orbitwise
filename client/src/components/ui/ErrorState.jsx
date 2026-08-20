@@ -35,7 +35,7 @@ export default function ErrorState({ error, onRetry, title, size = 'md', classNa
     >
       <span
         className={cn(
-          'flex items-center justify-center rounded-2xl bg-white text-danger-600 shadow-xs',
+          'flex items-center justify-center rounded-2xl bg-white text-danger-700 shadow-xs',
           compact ? 'size-11' : 'size-14'
         )}
       >
