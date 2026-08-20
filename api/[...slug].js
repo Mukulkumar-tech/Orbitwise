@@ -56,7 +56,26 @@ async function connect() {
   return cache.conn;
 }
 
+/**
+ * Normalizes the request path to what Express expects.
+ *
+ * Vercel's catch-all routing may deliver the path with the /api prefix intact
+ * ("/api/public/home") or stripped ("/public/home"), depending on how the
+ * function was matched. Every Express router here is mounted under /api, so a
+ * stripped prefix 404s the entire API while the static frontend keeps working —
+ * which looks like "the backend is down" rather than a routing mismatch.
+ *
+ * Handling both shapes removes the ambiguity instead of betting on one.
+ */
+function normalizeUrl(req) {
+  const url = req.url || '/';
+  if (url === '/api' || url.startsWith('/api/') || url.startsWith('/api?')) return url;
+  return '/api' + (url.startsWith('/') ? url : '/' + url);
+}
+
 export default async function handler(req, res) {
+  req.url = normalizeUrl(req);
+
   try {
     assertProductionEnv();
     await connect();
