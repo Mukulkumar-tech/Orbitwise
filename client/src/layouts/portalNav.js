@@ -1,4 +1,4 @@
-import { CalendarClock, Inbox, LayoutDashboard, Users } from 'lucide-react';
+import { CalendarClock, Inbox, LayoutDashboard, Mail, UserCog, Users } from 'lucide-react';
 
 import { PATHS } from '../constants/routes.js';
 
@@ -17,4 +17,11 @@ export const COUNSELLOR_NAV = [
   { to: PATHS.counsellorStudents, label: 'My students', icon: Users },
   { to: PATHS.counsellorReview, label: 'Document review', icon: Inbox },
   { to: PATHS.counsellorAppointments, label: 'Appointments', icon: CalendarClock },
+];
+
+export const ADMIN_NAV = [
+  { to: PATHS.adminHome, label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: PATHS.adminStudents, label: 'Students', icon: Users },
+  { to: PATHS.adminCounsellors, label: 'Counsellors', icon: UserCog },
+  { to: PATHS.adminEnquiries, label: 'Enquiries', icon: Mail },
 ];

@@ -3,7 +3,7 @@ import { env } from '../config/env.js';
 import logger from '../config/logger.js';
 import { seedUsers, DEMO_PASSWORD } from './seedUsers.js';
 import { seedCatalogue } from './seedCatalogue.js';
-import { seedCaseload } from './seedCaseload.js';
+import { seedCaseload, seedApplications } from './seedCaseload.js';
 
 /**
  * Seed runner — `npm run seed`.
@@ -39,6 +39,7 @@ async function run() {
   const kept = users.filter((user) => user.status === 'kept').length;
   const catalogue = await seedCatalogue({ force });
   const caseload = await seedCaseload({ force });
+  const applications = await seedApplications({ force });
 
   logger.banner('Seed complete', [
     ...users.map((user) => `${user.status.padEnd(9)} ${user.role.padEnd(11)} ${user.email}`),
@@ -53,6 +54,9 @@ async function run() {
     caseload.skipped
       ? `Caseload:  skipped (${caseload.skipped})`
       : `Caseload:  ${caseload.students} students · ${caseload.appointments} appointments · ${caseload.documents} documents to review`,
+    applications.skipped
+      ? `Apps:      skipped (${applications.skipped})`
+      : `Apps:      ${applications.applications} applications across the pipeline`,
   ]);
 
   await disconnectDB();

@@ -52,7 +52,11 @@ export const PATHS = {
   counsellorReview: '/counsellor/review',
   counsellorAppointments: '/counsellor/appointments',
 
+  // ─── Admin portal ───────────────────────────────────────────
   adminHome: '/admin',
+  adminStudents: '/admin/students',
+  adminCounsellors: '/admin/counsellors',
+  adminEnquiries: '/admin/enquiries',
 };
 
 /** Where a user lands after signing in. */

@@ -9,6 +9,7 @@ import applicationRoutes from './applicationRoutes.js';
 import { scholarshipRoutes, toolRoutes } from './scholarshipRoutes.js';
 import documentRoutes from './documentRoutes.js';
 import { counsellorRoutes, appointmentRoutes } from './counsellorRoutes.js';
+import adminRoutes from './adminRoutes.js';
 
 const router = Router();
 
@@ -36,9 +37,11 @@ router.use('/appointments', appointmentRoutes);
 // ─── Counsellor portal (authenticated, caseload-scoped) ─────────────────────
 router.use('/counsellors', counsellorRoutes);
 
+// ─── Admin portal (authenticated, admin-only at the router level) ───────────
+router.use('/admin', adminRoutes);
+
 // Remaining feature routers mount here as each phase lands:
-//   /scholarships  /applications  /documents  /counsellors  /appointments
-//   /messages  /notifications  /tools  /ai  /admin  /public
+//   /messages  /notifications  /ai
 //
 // /health is mounted separately in app.js, ahead of the rate limiter.
 

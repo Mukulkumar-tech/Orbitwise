@@ -3,6 +3,8 @@ import StudentProfile from '../models/StudentProfile.js';
 import Counsellor from '../models/Counsellor.js';
 import Appointment from '../models/Appointment.js';
 import Document from '../models/Document.js';
+import Application from '../models/Application.js';
+import Course from '../models/Course.js';
 import { getStorage } from '../services/storage/index.js';
 import { ROLES } from '../constants/index.js';
 import { DEMO_PASSWORD } from './seedUsers.js';
@@ -327,3 +329,90 @@ export async function seedCaseload({ force = false } = {}) {
 }
 
 export default seedCaseload;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLICATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * A few applications spread across the pipeline.
+ *
+ * Without these, the admin dashboard's "applications by stage" and "applications
+ * started" charts render their empty state and the offer rate reads 0% — which
+ * demonstrates the empty states, not the analytics. Real courses are read from
+ * the catalogue so every snapshot describes a programme that exists.
+ *
+ * The snapshot is deliberately denormalized on the Application, exactly as the
+ * service does it: an application is a historical record of the terms it was
+ * made under, so it must not re-read a course that may since have changed.
+ */
+export async function seedApplications({ force = false } = {}) {
+  const existing = await Application.countDocuments();
+  if (existing > 0 && !force) return { skipped: 'already seeded', applications: existing };
+  if (existing > 0) await Application.deleteMany({});
+
+  const emails = ['student@orbitwise.dev', 'ishita.rao@orbitwise.dev', 'vikram.iyer@orbitwise.dev'];
+  const students = await User.find({ email: { $in: emails } }).select('_id email name').lean();
+  if (!students.length) return { skipped: 'no students' };
+
+  const counsellorUser = await User.findOne({ email: 'counsellor@orbitwise.dev' }).select('_id name').lean();
+
+  // Spread across the pipeline so every stage in the chart has something in it,
+  // including the two terminal outcomes.
+  const STAGES = ['draft', 'documents_pending', 'submitted', 'under_review', 'offer_received', 'rejected'];
+
+  const courses = await Course.find({ isActive: true })
+    .select('title slug degreeLevel field countryCode countryName city durationMonths tuitionPerYearInr university')
+    .populate('university', 'name')
+    .limit(STAGES.length * students.length)
+    .lean();
+
+  if (!courses.length) return { skipped: 'no courses in the catalogue' };
+
+  const docs = [];
+  let cursor = 0;
+
+  for (const student of students) {
+    // Two each, so a student detail page shows a list rather than one row.
+    for (let i = 0; i < 2; i++) {
+      const course = courses[cursor % courses.length];
+      const status = STAGES[cursor % STAGES.length];
+      cursor += 1;
+
+      const submitted = ['submitted', 'under_review', 'offer_received', 'rejected'].includes(status);
+
+      docs.push({
+        student: student._id,
+        course: course._id,
+        university: course.university?._id ?? null,
+        counsellor: counsellorUser?._id ?? null,
+        snapshot: {
+          courseTitle: course.title,
+          universityName: course.university?.name ?? 'University',
+          countryCode: course.countryCode,
+          countryName: course.countryName ?? '',
+          city: course.city ?? '',
+          degreeLevel: course.degreeLevel,
+          field: course.field ?? '',
+          durationMonths: course.durationMonths ?? null,
+          tuitionPerYearInr: course.tuitionPerYearInr ?? null,
+          courseSlug: course.slug ?? '',
+        },
+        status,
+        intake: { season: 'September', year: 2026 },
+        // Append-only in production, written only by the service on a transition.
+        // Seeded with the one entry that explains the current state.
+        timeline: [
+          { status: 'draft', note: 'Application created', actor: 'student', at: new Date(Date.now() - 12 * 86_400_000) },
+          ...(status === 'draft'
+            ? []
+            : [{ status, note: 'Seeded demo state', actor: 'system', at: new Date(Date.now() - 2 * 86_400_000) }]),
+        ],
+        submittedAt: submitted ? new Date(Date.now() - 6 * 86_400_000) : null,
+      });
+    }
+  }
+
+  await Application.insertMany(docs);
+  return { applications: docs.length };
+}

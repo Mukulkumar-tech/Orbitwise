@@ -20,13 +20,14 @@ let server;
 async function seedEphemeralDatabase() {
   const { seedUsers, DEMO_PASSWORD } = await import('./seed/seedUsers.js');
   const { seedCatalogue } = await import('./seed/seedCatalogue.js');
-  const { seedCaseload } = await import('./seed/seedCaseload.js');
+  const { seedCaseload, seedApplications } = await import('./seed/seedCaseload.js');
 
   const users = await seedUsers();
   const catalogue = await seedCatalogue();
   // Gives the counsellor portal a caseload; without it every screen there is
   // an empty state, which demonstrates none of what the portal is for.
   const caseload = await seedCaseload();
+  const applications = await seedApplications();
 
   logger.banner('Demo data ready (in-memory database)', [
     ...users.map((user) => `${user.role.padEnd(11)} ${user.email}`),
@@ -38,6 +39,9 @@ async function seedEphemeralDatabase() {
     caseload.skipped
       ? `Caseload     skipped (${caseload.skipped})`
       : `Caseload     ${caseload.students} students · ${caseload.appointments} appointments · ${caseload.documents} docs to review`,
+    applications.skipped
+      ? `Apps         skipped (${applications.skipped})`
+      : `Apps         ${applications.applications} applications across the pipeline`,
   ]);
 }
 
