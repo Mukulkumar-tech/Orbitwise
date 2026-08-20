@@ -9,7 +9,14 @@ import axios from 'axios';
  * payload has nothing persistent to steal.
  */
 export const api = axios.create({
-  baseURL: '/api',
+  /**
+   * Relative by default, which is correct whenever the API is served from the
+   * same origin as the app — the Vite proxy locally, or a single Vercel project.
+   *
+   * VITE_API_URL overrides it for a split deployment (client on one host, API on
+   * another). Baked in at build time, so it must be set before `vite build`.
+   */
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   withCredentials: true,
   timeout: 20_000,
   headers: { 'Content-Type': 'application/json' },

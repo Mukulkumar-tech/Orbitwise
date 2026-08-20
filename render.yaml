@@ -1,0 +1,47 @@
+# Render blueprint for the Orbitwise API.
+#
+# Render runs a normal long-lived Node process, so `server.js` executes unchanged:
+# app.listen() works, the Mongo connection is opened once at boot rather than
+# cached per invocation, and the local disk is writable so document upload works.
+#
+# None of the serverless constraints apply here. The frontend still deploys to
+# Vercel as a static site.
+services:
+  - type: web
+    name: orbitwise-api
+    runtime: node
+    plan: free
+    # Installs the whole workspace, then starts only the server.
+    buildCommand: npm install
+    startCommand: npm run start --workspace server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Paste your Atlas connection string here in the Render dashboard.
+      # Marked sync:false so it is never stored in this file.
+      - key: MONGODB_URI
+        sync: false
+
+      # Generated once by Render and kept. Never commit real secrets.
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+
+      # The Vercel origin. Drives the CORS allowlist and the links in emails, so
+      # a mismatch here is why "login works, then reload signs you out".
+      - key: CLIENT_URL
+        sync: false
+
+      # Required for a split deployment: with SameSite=Lax the browser silently
+      # declines to send the refresh cookie to a different domain, and every
+      # session dies on reload with no error anywhere to explain it.
+      - key: COOKIE_SAMESITE
+        value: none
+
+      - key: EMAIL_PROVIDER
+        value: console
+      - key: STORAGE_PROVIDER
+        value: local
