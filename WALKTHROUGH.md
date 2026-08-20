@@ -288,7 +288,7 @@ design. The rewritten version tests the role gate on a legal edge, which is a sh
 
 ## 8. What is pending — say this plainly
 
-**Complete: phases 1–11 of 14.**
+**Complete: phases 1–13 of 14.**
 
 | Phase | Status | What is missing |
 |---|---|---|
@@ -303,33 +303,70 @@ design. The rewritten version tests the role gate on a legal edge, which is a sh
 | 9 Applications | ✅ | — |
 | 10 Documents | ✅ | — |
 | 11 Scholarships + calculator | ✅ | — |
-| **12 Counsellor portal** | ⬜ | `Counsellor`, `Appointment`, `Conversation`, `Message` models; dashboard, booking with conflict detection, messaging, private notes UI |
-| **13 Admin portal** | ⬜ | CRUD across 6 entities, Recharts analytics, student table with CSV export, `Notification` + `Blog` models |
-| **14 Polish** | ⬜ | Route-level code splitting (bundle is one 567 KB chunk), full a11y audit, mobile pass, performance |
+| 12 Counsellor portal | ✅ | Messaging UI (see below) |
+| 13 Admin portal | ✅ | Catalogue CRUD screens (see below) |
+| **14 Polish** | 🟡 | Route splitting done for the staff portals; full a11y audit, mobile pass and performance sweep outstanding |
+
+### What phases 12 and 13 actually shipped
+
+**Counsellor portal** — caseload ordered as a worklist (students with documents waiting sort first,
+not alphabetically), per-student detail refused server-side unless the student is on the caller's
+caseload, a document review queue where rejection *requires* a note, and appointment booking with
+true interval-overlap conflict detection. Slots are generated server-side from published availability
+and filtered against existing bookings, so the UI never offers a time the booking call would reject —
+and a 409 from a lost race refetches rather than lying.
+
+**Admin portal** — six Recharts visuals, a student table with server-side search / filter / sort /
+pagination whose filter state lives in the URL, inline counsellor assignment, and a CSV export that
+reuses the exact same query method as the table so the export can never drift from the view.
+
+Two details worth volunteering, because they are the kind of thing that separates working from
+correct:
+
+- The CSV quotes every field and prefixes anything starting `=`, `+`, `-` or `@`. Excel executes
+  those, so a student named `=1+1` is a CSV injection. There is a test that fails without the guard.
+- The export is fetched through the API client and saved from a Blob, not pointed at by an
+  `<a href>`. The access token lives in memory and travels as an `Authorization` header — a link
+  navigation carries no header, so the browser would have cheerfully downloaded a 401 body as a .csv.
 
 ### Concrete gaps, stated honestly
 
-- **6 of 16 planned models are unbuilt:** `Counsellor`, `Appointment`, `Conversation`, `Message`,
-  `Notification`, `Blog`. (`Shortlist` is embedded in `StudentProfile` — a deliberate choice for a
-  20-item capped list, not a gap.)
-- **`/counsellor` and `/admin` are not real portals.** Both render the shared account screen. Logging
-  in as `counsellor@orbitwise.dev` gives a working account page, not a counsellor dashboard. The
-  *backend* already supports counsellor document review and application notes; the UI does not exist.
+- **4 of 16 planned models are unbuilt:** `Conversation`, `Message`, `Notification`, `Blog`.
+  (`Shortlist` is embedded in `StudentProfile` — a deliberate choice for a 20-item capped list, not
+  a gap. `Counsellor` and `Appointment` landed in phase 12.)
+- **Messaging does not exist.** Counsellor and student communicate through the appointment agenda and
+  document review notes, both of which are real and working. There is no conversation thread.
+- **Catalogue CRUD is read-only in the admin UI.** Courses, universities, countries and scholarships
+  are seeded and fully queryable, but there is no create/edit form for them. The admin screens built
+  are the ones an admin uses daily — students, caseload assignment, enquiries — rather than the
+  data-entry screens used once at setup.
 - **The AI assistant was never built.** `AI_PROVIDER` is configured in `.env.example` but has no
   implementation. It was scoped as "UI + architecture only" and did not get built.
 - **Cloudinary storage is not implemented.** Selecting it **fails loudly at boot** rather than silently
   writing to disk — a wrong-but-working path is discovered only when someone needs the files back.
 - **Real-time messaging is REST-shaped, not built.** The schemas were designed Socket.IO-ready; no
   sockets exist.
-- **Everything loads eagerly.** No lazy routes yet, hence the single large bundle.
+- **The entry chunk is still ~650 KB.** The staff portals are lazy-loaded; the public site and student
+  portal are not yet.
 
 ### If an interviewer asks "why isn't it finished?"
 
 The honest answer, and a good one: the work was sequenced so that the **vertical slice a user actually
 needs works end to end** — discover, profile, match, compare, apply, upload, plan cost — before
-building internal-facing tooling. A counsellor dashboard and an admin CRUD panel are valuable but they
-serve staff, not the student. Phases 12 and 13 are also the most mechanical of the fourteen: CRUD
-screens and charts over models that already have a proven pattern to follow.
+building internal-facing tooling, and the staff tooling was then built in the order staff would
+actually use it. What is left is the least interesting third of phase 14 (an accessibility and
+performance sweep) plus two features that are genuinely separate products: a messaging system and a
+CMS for the catalogue.
+
+### A thing worth saying out loud
+
+Both staff portals were verified by driving a real Chrome over the DevTools protocol — signing in,
+walking every screen, and asserting zero console errors, zero uncaught exceptions and zero failed
+requests. That found three defects a passing build and a green test suite had both missed: an API
+serving a counsellor whose user account had been deleted (an unbookable card with an undefined React
+key), a seeder that orphaned rows on re-run, and demo fixtures keyed by array position that had
+attached one student's passport to another student's file. Worth mentioning because "it builds" and
+"it works" are different claims.
 
 ---
 

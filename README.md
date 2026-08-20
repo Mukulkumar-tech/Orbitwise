@@ -122,8 +122,9 @@ against every year of a three-year degree overstates the total by twice the fee.
 `laterYear` are reported separately for the same reason.
 
 Every student route says `me`. There is no `:studentId` anywhere in the portal, so one student cannot
-read another's profile by guessing an id — counsellor access will be a separate, explicitly authorized
-route in Phase 12.
+read another's profile by guessing an id. Counsellor access is a separate, explicitly authorized route
+family under `/counsellors/me/...`, scoped server-side to the caller's own caseload — so the id in
+`/counsellors/me/students/:id` grants nothing by itself.
 
 ### Swappable adapters
 
@@ -270,13 +271,22 @@ visible focus ring, form errors are wired through `aria-invalid` + `aria-describ
 | 9 · Applications — status machine, append-only timeline, tracker, notes | ✅ Complete |
 | 10 · Documents — upload, review workflow, authenticated streaming, storage adapter | ✅ Complete |
 | 11 · Scholarships + cost calculator — scored matching, deadline tracker, full cost engine | ✅ Complete |
-| 12 · Counsellor portal + messaging | ⬜ |
-| 13 · Admin portal | ⬜ |
-| 14 · Polish, a11y, performance, hardening | ⬜ |
+| 12 · Counsellor portal — caseload worklist, document review, appointment booking with conflict detection | ✅ Complete |
+| 13 · Admin portal — six Recharts visuals, student table with server-side filtering, CSV export, counsellor assignment | ✅ Complete |
+| 14 · Polish, a11y, performance, hardening | 🟡 Route splitting done for the staff portals; a11y and mobile sweep outstanding |
 
-**Currently runnable:** `/` (system status — replaced by the homepage in Phase 4), `/login`,
-`/register`, `/forgot-password`, `/reset-password/:token`, `/verify-email/:token`, `/onboarding`,
-`/app` (dashboard), `/app/courses`, `/app/shortlist`, `/app/profile`, `/counsellor`, `/admin`, `/403`.
+Not built, and named rather than implied: messaging (`Conversation`/`Message`), notifications,
+the blog, the AI assistant, and create/edit forms for the catalogue. `WALKTHROUGH.md` §8 lists
+each gap and why it was left.
+
+**Every route in the map is runnable.** The public site, the full student portal, the counsellor
+portal (`/counsellor`, `/counsellor/students`, `/counsellor/students/:id`, `/counsellor/review`,
+`/counsellor/appointments`) and the admin portal (`/admin`, `/admin/students`,
+`/admin/counsellors`, `/admin/enquiries`) all render real data against real endpoints.
+
+All three demo logins land somewhere purpose-built rather than on a shared account page, and the
+seed gives the counsellor a caseload with a booking request waiting to be confirmed and documents
+waiting to be reviewed — so each portal has something to do on first load.
 
 The student journey works end to end: sign in → build a profile in five steps → land on a dashboard
 of scored matches → open "Why this matches" → shortlist. A new account starts at 0% profile and its
@@ -312,7 +322,7 @@ from the seeder or, later, the admin portal.
 npm test
 ```
 
-**161 tests, ~27s.** Server (131), client (30).
+**314 tests, ~25s.** Server (266), client (48).
 
 **Authentication (47)** — the credential lifecycle end to end over real HTTP: role-escalation
 resistance, account-enumeration resistance, forged and expired tokens, refresh rotation and replay,
@@ -339,14 +349,22 @@ coerce to `true`.
 **Catalogue integrity (5)** — the seed is idempotent, every course has a slug and a rupee price, and
 no course advertises an intake month its destination does not run.
 
-**Client (30)** — `useQuery`, which backs every data-loading page: loading/success/error/empty
+**Client (48)** — `useQuery`, which backs every data-loading page: loading/success/error/empty
 transitions, refetch recovery, StrictMode double-mounting, and the out-of-order response race where a
 slow earlier request must not overwrite a newer one. Plus the wizard's pure core: per-step validation
 and the form↔profile mapping, where writing marks into the wrong field would silently score a
 master's applicant on their Class 12 percentage.
 
-The full student journey is also verified in a real browser — sign in, five wizard steps, scored
-dashboard, expanded breakdown, shortlist — driven over the Chrome DevTools Protocol.
+**Counsellor portal (11)** — caseload reads scoped to `assignedStudents`, a 403 for a student who is
+not yours, profile completion computed rather than read off a field the model does not have, and a
+bookable list that omits a counsellor whose user account is gone.
 
-Later phases add: document access control, application status transition legality, and cost
-calculator arithmetic.
+**Admin (23)** — the role matrix (a counsellor is refused: elevated is not the same as admin),
+zero-filled chart series, regex-escaped search, an allowlisted sort key, reassignment that moves
+rather than duplicates, an export that respects the active filter, and CSV-injection neutralization.
+That last one was verified by reverting the guard and watching the test fail.
+
+Every portal is also verified in a real browser, driven over the Chrome DevTools Protocol: sign in,
+walk each screen, assert zero console errors, zero uncaught exceptions and zero failed requests.
+That pass is what found three defects the build and the test suite had both missed — see
+`WALKTHROUGH.md` §8.
