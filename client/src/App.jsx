@@ -35,6 +35,14 @@ import Applications from './pages/student/Applications.jsx';
 import Documents from './pages/student/Documents.jsx';
 import ApplicationDetail from './pages/student/ApplicationDetail.jsx';
 import Profile from './pages/student/Profile.jsx';
+import BookSession from './pages/student/BookSession.jsx';
+import Appointments from './pages/shared/Appointments.jsx';
+import PortalLayout from './layouts/PortalLayout.jsx';
+import { COUNSELLOR_NAV } from './layouts/portalNav.js';
+import CounsellorDashboard from './pages/counsellor/Dashboard.jsx';
+import CounsellorStudents from './pages/counsellor/Students.jsx';
+import CounsellorStudentDetail from './pages/counsellor/StudentDetail.jsx';
+import ReviewQueue from './pages/counsellor/ReviewQueue.jsx';
 import Forbidden from './pages/Forbidden.jsx';
 import NotFound from './pages/NotFound.jsx';
 
@@ -95,12 +103,21 @@ export default function App() {
           <Route path={PATHS.studentDocuments} element={<Documents />} />
           <Route path={PATHS.application()} element={<ApplicationDetail />} />
           <Route path={PATHS.studentProfile} element={<Profile />} />
+          <Route path={PATHS.studentBookSession} element={<BookSession />} />
+          <Route path={PATHS.studentAppointments} element={<Appointments />} />
         </Route>
       </Route>
 
       {/* ─── Counsellor ──────────────────────────────────────────────── */}
       <Route element={<RoleRoute roles={[ROLES.COUNSELLOR]} />}>
-        <Route path={PATHS.counsellorHome} element={<AccountOverview />} />
+        <Route element={<PortalLayout nav={COUNSELLOR_NAV} roleLabel="Counsellor" />}>
+          <Route path={PATHS.counsellorHome} element={<CounsellorDashboard />} />
+          <Route path={PATHS.counsellorStudents} element={<CounsellorStudents />} />
+          <Route path={PATHS.counsellorStudent()} element={<CounsellorStudentDetail />} />
+          <Route path={PATHS.counsellorReview} element={<ReviewQueue />} />
+          {/* Same component as the student view; the API scopes results by role. */}
+          <Route path={PATHS.counsellorAppointments} element={<Appointments />} />
+        </Route>
       </Route>
 
       {/* ─── Admin ───────────────────────────────────────────────────── */}

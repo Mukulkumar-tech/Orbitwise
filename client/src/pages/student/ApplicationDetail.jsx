@@ -13,29 +13,14 @@ import useQuery from '../../hooks/useQuery.js';
 import useMutation from '../../hooks/useMutation.js';
 import applicationService from '../../services/applicationService.js';
 import { PATHS } from '../../constants/routes.js';
-import { degreeLabel, fieldLabel, formatDuration, formatInr } from '../../constants/domain.js';
-
-const TONE = {
-  draft: 'neutral',
-  documents_pending: 'warning',
-  ready_to_apply: 'primary',
-  submitted: 'info',
-  under_review: 'info',
-  offer_received: 'success',
-  rejected: 'danger',
-  withdrawn: 'neutral',
-};
-
-const STATUS_LABELS = {
-  draft: 'Draft',
-  documents_pending: 'Documents Pending',
-  ready_to_apply: 'Ready to Apply',
-  submitted: 'Submitted',
-  under_review: 'Under Review',
-  offer_received: 'Offer Received',
-  rejected: 'Rejected',
-  withdrawn: 'Withdrawn',
-};
+import {
+  APPLICATION_STATUS_LABELS as STATUS_LABELS,
+  APPLICATION_STATUS_TONES as TONE,
+  degreeLabel,
+  fieldLabel,
+  formatDuration,
+  formatInr,
+} from '../../constants/domain.js';
 
 /** Withdrawing is terminal, so it asks first. */
 const DESTRUCTIVE = new Set(['withdrawn']);

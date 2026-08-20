@@ -10,19 +10,7 @@ import StatTile from '../../components/cards/StatTile.jsx';
 import useQuery from '../../hooks/useQuery.js';
 import applicationService from '../../services/applicationService.js';
 import { PATHS } from '../../constants/routes.js';
-import { degreeLabel, formatInr } from '../../constants/domain.js';
-
-/** Status → badge tone. Terminal outcomes read differently from work in progress. */
-const TONE = {
-  draft: 'neutral',
-  documents_pending: 'warning',
-  ready_to_apply: 'primary',
-  submitted: 'info',
-  under_review: 'info',
-  offer_received: 'success',
-  rejected: 'danger',
-  withdrawn: 'neutral',
-};
+import { APPLICATION_STATUS_TONES as TONE, degreeLabel, formatInr } from '../../constants/domain.js';
 
 export default function Applications() {
   const { data: applications, isLoading, isError, error, refetch } = useQuery(

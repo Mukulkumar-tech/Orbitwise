@@ -1,24 +1,15 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Bookmark, CalendarClock, Compass, FileText, FolderOpen, LayoutDashboard, LogOut, UserCog } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 import Avatar from '../components/ui/Avatar.jsx';
 import Button from '../components/ui/Button.jsx';
 import Logo from '../components/shared/Logo.jsx';
+import Badge from '../components/ui/Badge.jsx';
 import { PATHS } from '../constants/routes.js';
 import { useAuth } from '../hooks/useAuth.js';
 import cn from '../utils/cn.js';
-
-const NAV = [
-  { to: PATHS.studentHome, label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: PATHS.studentCourses, label: 'Find courses', icon: Compass },
-  { to: PATHS.studentShortlist, label: 'Shortlist', icon: Bookmark },
-  { to: PATHS.studentApplications, label: 'Applications', icon: FileText },
-  { to: PATHS.studentDocuments, label: 'Documents', icon: FolderOpen },
-  { to: PATHS.studentAppointments, label: 'Sessions', icon: CalendarClock },
-  { to: PATHS.studentProfile, label: 'Your profile', icon: UserCog },
-];
 
 const linkClasses = ({ isActive }) =>
   cn(
@@ -27,15 +18,14 @@ const linkClasses = ({ isActive }) =>
   );
 
 /**
- * Shell for the student portal.
+ * Shared shell for the staff portals.
  *
- * A fixed sidebar from `lg` up, and below that a scrollable pill row under the
- * header. Deliberately not a slide-over drawer: a drawer needs a focus trap,
- * scroll locking, an escape handler and a return-focus target to be usable with a
- * keyboard, and for four destinations a visible row does the same job with none of
- * that surface area to get wrong.
+ * Extracted rather than copied from StudentLayout: the counsellor and admin
+ * portals need the same sidebar, the same mobile pill row and the same sign-out,
+ * and three near-identical layouts would drift the moment one of them changed.
+ * `nav` and `roleLabel` are the only differences.
  */
-export default function StudentLayout() {
+export default function PortalLayout({ nav = [], roleLabel }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
@@ -49,13 +39,20 @@ export default function StudentLayout() {
 
   return (
     <div className="min-h-screen bg-canvas">
-      {/* ─── Sidebar (lg and up) ──────────────────────────────────────────── */}
+      {/* ─── Sidebar (lg and up) ─────────────────────────────────────── */}
       <aside className="fixed inset-y-0 left-0 hidden w-[16.5rem] flex-col border-r border-navy-100 bg-white px-4 py-6 lg:flex">
-        <Logo className="px-2" />
+        <div className="px-2">
+          <Logo />
+          {roleLabel && (
+            <Badge tone="primary" size="sm" className="mt-3">
+              {roleLabel}
+            </Badge>
+          )}
+        </div>
 
-        <nav aria-label="Student portal" className="mt-8 flex-1">
+        <nav aria-label={`${roleLabel} portal`} className="mt-8 flex-1">
           <ul className="space-y-1">
-            {NAV.map(({ to, label, icon: Icon, end }) => (
+            {nav.map(({ to, label, icon: Icon, end }) => (
               <li key={to}>
                 <NavLink to={to} end={end} className={linkClasses}>
                   <Icon className="size-4.5 shrink-0" aria-hidden="true" />
@@ -92,7 +89,7 @@ export default function StudentLayout() {
         </div>
       </aside>
 
-      {/* ─── Mobile header ────────────────────────────────────────────────── */}
+      {/* ─── Mobile header ───────────────────────────────────────────── */}
       <div className="sticky top-0 z-20 border-b border-navy-100 bg-white/95 backdrop-blur lg:hidden">
         <div className="flex h-14 items-center justify-between px-5">
           <Logo size="sm" />
@@ -106,9 +103,9 @@ export default function StudentLayout() {
           </div>
         </div>
 
-        <nav aria-label="Student portal" className="scrollbar-slim overflow-x-auto px-3 pb-2">
+        <nav aria-label={`${roleLabel} portal`} className="scrollbar-slim overflow-x-auto px-3 pb-2">
           <ul className="flex gap-1.5">
-            {NAV.map(({ to, label, icon: Icon, end }) => (
+            {nav.map(({ to, label, icon: Icon, end }) => (
               <li key={to}>
                 <NavLink
                   to={to}

@@ -201,3 +201,100 @@ export const formatDuration = (months) => {
   const years = months / 12;
   return `${Number.isInteger(years) ? years : years.toFixed(1)} year${years === 1 ? '' : 's'}`;
 };
+
+/* ─── Counsellor portal ────────────────────────────────────────────────────── */
+
+/**
+ * Labels for the staff-facing enums.
+ *
+ * Kept here with every other slug→label map rather than inline in a component,
+ * so a rename is one edit and never a database migration.
+ */
+export const APPOINTMENT_TYPE_LABELS = {
+  counselling: 'General counselling',
+  university_selection: 'University selection',
+  application_review: 'Application review',
+  visa_consultation: 'Visa consultation',
+  pre_departure: 'Pre-departure briefing',
+};
+
+export const appointmentTypeLabel = (slug) => APPOINTMENT_TYPE_LABELS[slug] ?? humanize(slug);
+
+export const APPOINTMENT_STATUS_LABELS = {
+  requested: 'Requested',
+  confirmed: 'Confirmed',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
+  no_show: 'No show',
+};
+
+/** Tone per status, so the colour of a booking is decided in one place. */
+export const APPOINTMENT_STATUS_TONES = {
+  requested: 'warning',
+  confirmed: 'success',
+  completed: 'neutral',
+  cancelled: 'danger',
+  no_show: 'danger',
+};
+
+export const DOCUMENT_TYPE_LABELS = {
+  passport: 'Passport',
+  degree_certificate: 'Degree certificate',
+  mark_sheets: 'Mark sheets',
+  english_test: 'English test score',
+  sop: 'Statement of purpose',
+  lor: 'Letter of recommendation',
+  resume: 'Resume / CV',
+  financial: 'Financial documents',
+  visa: 'Visa documents',
+};
+
+export const documentTypeLabel = (slug) => DOCUMENT_TYPE_LABELS[slug] ?? humanize(slug);
+
+/* ─── Applications ─────────────────────────────────────────────────────────── */
+
+/**
+ * Application status labels and tones.
+ *
+ * Lifted out of the two student pages that each had their own copy once the
+ * counsellor's student detail became a third caller. Three copies of a status
+ * map is three chances for the same status to render as a different colour.
+ *
+ * Note the counsellor endpoints read applications with `.lean()`, which skips
+ * Mongoose virtuals — so `statusLabel` is absent there and the label has to come
+ * from here rather than from the payload.
+ */
+export const APPLICATION_STATUS_LABELS = {
+  draft: 'Draft',
+  documents_pending: 'Documents Pending',
+  ready_to_apply: 'Ready to Apply',
+  submitted: 'Submitted',
+  under_review: 'Under Review',
+  offer_received: 'Offer Received',
+  rejected: 'Rejected',
+  withdrawn: 'Withdrawn',
+};
+
+export const applicationStatusLabel = (slug) => APPLICATION_STATUS_LABELS[slug] ?? humanize(slug);
+
+/** Terminal outcomes read differently from work in progress. */
+export const APPLICATION_STATUS_TONES = {
+  draft: 'neutral',
+  documents_pending: 'warning',
+  ready_to_apply: 'primary',
+  submitted: 'info',
+  under_review: 'info',
+  offer_received: 'success',
+  rejected: 'danger',
+  withdrawn: 'neutral',
+};
+
+/** Document status → badge tone, mirroring the review workflow's severity. */
+export const DOCUMENT_STATUS_TONES = {
+  missing: 'neutral',
+  uploaded: 'info',
+  under_review: 'warning',
+  verified: 'success',
+  rejected: 'danger',
+  expired: 'danger',
+};

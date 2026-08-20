@@ -42,7 +42,16 @@ export const PATHS = {
   studentDocuments: '/app/documents',
   application: (id = ':id') => `/app/applications/${id}`,
   studentProfile: '/app/profile',
+  studentAppointments: '/app/appointments',
+  studentBookSession: '/app/appointments/book',
+
+  // ─── Counsellor portal ────────────────────────────────────────
   counsellorHome: '/counsellor',
+  counsellorStudents: '/counsellor/students',
+  counsellorStudent: (id = ':id') => `/counsellor/students/${id}`,
+  counsellorReview: '/counsellor/review',
+  counsellorAppointments: '/counsellor/appointments',
+
   adminHome: '/admin',
 };
 

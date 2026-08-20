@@ -6,6 +6,7 @@ import Appointment from '../models/Appointment.js';
 import User from '../models/User.js';
 import ApiError from '../utils/ApiError.js';
 import { DOCUMENT_STATUS } from '../constants/index.js';
+import { completionOf } from './profileService.js';
 
 /**
  * The counsellor's own caseload.
@@ -121,7 +122,10 @@ export const counsellorService = {
           joinedAt: user.createdAt,
           lastLogin: user.lastLogin,
           educationLevel: profile?.education?.level ?? null,
-          completionPercent: profile?.completion?.percent ?? 0,
+          // Computed, not stored: `completion` is derived state and the model has
+          // no such field, so reading one would silently report every student as
+          // 0% and make the worklist sort below a no-op.
+          completionPercent: profile ? completionOf(profile).percent : 0,
           destinations: profile?.destinations ?? [],
           applications: appsBy.get(id) ?? 0,
           documentsAwaitingReview: docsBy.get(id) ?? 0,
@@ -153,7 +157,15 @@ export const counsellorService = {
     ]);
 
     if (!user) throw ApiError.notFound('Student not found');
-    return { student: user, profile, applications, documents, appointments };
+
+    return {
+      student: user,
+      profile,
+      completion: profile ? completionOf(profile) : { percent: 0, items: [], missing: [] },
+      applications,
+      documents,
+      appointments,
+    };
   },
 
   /** Documents across the caseload that need a decision. */
