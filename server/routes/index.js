@@ -8,6 +8,7 @@ import publicRoutes from './publicRoutes.js';
 import applicationRoutes from './applicationRoutes.js';
 import { scholarshipRoutes, toolRoutes } from './scholarshipRoutes.js';
 import documentRoutes from './documentRoutes.js';
+import { counsellorRoutes, appointmentRoutes } from './counsellorRoutes.js';
 
 const router = Router();
 
@@ -30,6 +31,10 @@ router.use('/tools', toolRoutes);
 router.use('/students', studentRoutes);
 router.use('/applications', applicationRoutes);
 router.use('/documents', documentRoutes);
+router.use('/appointments', appointmentRoutes);
+
+// ─── Counsellor portal (authenticated, caseload-scoped) ─────────────────────
+router.use('/counsellors', counsellorRoutes);
 
 // Remaining feature routers mount here as each phase lands:
 //   /scholarships  /applications  /documents  /counsellors  /appointments
