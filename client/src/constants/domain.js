@@ -9,7 +9,17 @@
  */
 
 /** Turns any unmapped slug into prose rather than showing the raw value. */
-const humanize = (slug = '') => slug.replace(/_/g, ' ').replace(/^./, (char) => char.toUpperCase());
+/**
+ * Turns a slug into readable text.
+ *
+ * Nullish input returns an empty string rather than throwing. A default
+ * parameter only covers undefined, so `humanize(null)` used to raise a
+ * TypeError — and several fields that reach these accessors are genuinely
+ * nullable (an application snapshot degreeLevel, an unset goal), which made a
+ * blank value able to take a whole page down.
+ */
+const humanize = (slug) =>
+  slug == null ? '' : String(slug).replace(/_/g, ' ').replace(/^./, (char) => char.toUpperCase());
 
 const labelFrom = (map) => (slug) => map[slug] ?? humanize(slug);
 

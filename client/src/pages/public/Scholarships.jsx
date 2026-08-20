@@ -14,7 +14,7 @@ import { useAuth } from '../../hooks/useAuth.js';
 import scholarshipService from '../../services/scholarshipService.js';
 import catalogueService from '../../services/catalogueService.js';
 import { PATHS } from '../../constants/routes.js';
-import { DEGREE_LEVELS, FIELDS } from '../../constants/domain.js';
+import { DEGREE_LEVELS, FIELDS, degreeLabel, fieldLabel } from '../../constants/domain.js';
 
 /**
  * Scholarships — public catalogue, personalized for a signed-in student.
@@ -102,17 +102,17 @@ export default function Scholarships() {
           </Select>
           <Select label="Level" value={filters.degreeLevel} onChange={(e) => update('degreeLevel', e.target.value)}>
             <option value="">All levels</option>
-            {Object.entries(DEGREE_LEVELS).map(([slug, entry]) => (
+            {Object.keys(DEGREE_LEVELS).map((slug) => (
               <option key={slug} value={slug}>
-                {entry.label}
+                {degreeLabel(slug)}
               </option>
             ))}
           </Select>
           <Select label="Subject" value={filters.field} onChange={(e) => update('field', e.target.value)}>
             <option value="">All subjects</option>
-            {Object.entries(FIELDS).map(([slug, entry]) => (
+            {Object.keys(FIELDS).map((slug) => (
               <option key={slug} value={slug}>
-                {entry.label}
+                {fieldLabel(slug)}
               </option>
             ))}
           </Select>
