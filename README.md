@@ -11,6 +11,9 @@ goals, and explains *why* it scored that way.
 > feature inventory, and exactly what is still pending. Start there if you want the narrative rather
 > than the setup steps.
 
+> 🚀 **[DEPLOYMENT.md](DEPLOYMENT.md)** — deploying to Vercel. Requires a MongoDB Atlas cluster;
+> the in-memory database cannot run on serverless.
+
 ---
 
 ## Quick start

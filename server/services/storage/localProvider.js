@@ -49,8 +49,27 @@ export const localProvider = {
     const key = buildKey(folder, extension);
     const target = resolveKey(key);
 
-    await fs.mkdir(path.dirname(target), { recursive: true });
-    await fs.writeFile(target, buffer);
+    try {
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.writeFile(target, buffer);
+    } catch (error) {
+      /**
+       * Serverless platforms mount a read-only filesystem outside /tmp, and /tmp
+       * itself is per-invocation. Rather than reporting a bare EROFS, say what is
+       * actually wrong and what to do about it.
+       *
+       * Deliberately not falling back to /tmp: a student would see "uploaded",
+       * and their passport scan would be gone on the next request. Losing a file
+       * silently is far worse than refusing to accept it.
+       */
+      if (error.code === 'EROFS' || error.code === 'EACCES') {
+        throw ApiError.internal(
+          'File storage is unavailable: this environment has a read-only filesystem. ' +
+            'Document upload needs object storage (Cloudinary or GridFS) rather than local disk.'
+        );
+      }
+      throw error;
+    }
 
     return { key, size: buffer.length, provider: 'local' };
   },

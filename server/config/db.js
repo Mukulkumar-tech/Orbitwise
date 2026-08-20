@@ -22,7 +22,12 @@ export async function connectDB() {
   const ephemeral = !uri;
 
   if (ephemeral) {
-    const { MongoMemoryServer } = await import('mongodb-memory-server');
+    // Specifier built at runtime so bundlers and dependency tracers do not try
+    // to pull this dev-only package into a production build. Vercel installs
+    // with NODE_ENV=production, so the package is absent there — a statically
+    // analysable import would fail the build for code that never runs in prod.
+    const devOnly = ['mongodb', 'memory', 'server'].join('-');
+    const { MongoMemoryServer } = await import(/* @vite-ignore */ devOnly);
     memoryServer = await MongoMemoryServer.create({ instance: { dbName: 'orbitwise' } });
     uri = memoryServer.getUri();
   }
