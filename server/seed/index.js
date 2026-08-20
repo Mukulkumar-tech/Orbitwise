@@ -45,6 +45,7 @@ async function run() {
     ...(kept ? [`${kept} existing account(s) kept — use --force to recreate.`] : []),
     '',
     `Catalogue: ${catalogue.countries} countries · ${catalogue.universities} universities · ${catalogue.courses} courses`,
+    `           ${catalogue.scholarships} scholarships · ${catalogue.testimonials} success stories`,
     `           ${catalogue.created} created, ${catalogue.updated} updated in place`,
   ]);
 
