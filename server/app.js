@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 
 import { env } from './config/env.js';
+import logger from './config/logger.js';
 import routes from './routes/index.js';
 import healthRoutes from './routes/healthRoutes.js';
 import sanitize from './middleware/sanitize.js';
@@ -32,14 +33,20 @@ app.use(
 );
 
 const allowedOrigins = new Set(
-  [env.CLIENT_URL, ...(env.isProd ? [] : ['http://localhost:5173', 'http://127.0.0.1:5173'])].filter(Boolean)
+  [...env.CLIENT_ORIGINS, ...(env.isProd ? [] : ['http://localhost:5173', 'http://127.0.0.1:5173'])].filter(Boolean)
 );
 
 app.use(
   cors({
     origin(origin, callback) {
       // Same-origin requests and server-to-server tools send no Origin header.
-      if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+      // Normalized both sides: a configured trailing slash would otherwise never
+      // match an Origin header, which never has one.
+      if (!origin || allowedOrigins.has(origin.replace(/[/]+$/, ''))) return callback(null, true);
+
+      // Logged, not just rejected. Without this the only evidence is a 403 in
+      // someone's browser, and the allowed set is invisible from outside.
+      logger.warn(`CORS rejected origin "${origin}". Allowed: ${[...allowedOrigins].join(', ') || '(none configured)'}`);
       // An ApiError (not a bare Error) so the rejection surfaces as a clean 403
       // through the central handler rather than an opaque 500.
       return callback(ApiError.forbidden(`Origin not allowed by CORS: ${origin}`));

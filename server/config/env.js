@@ -12,6 +12,9 @@ const num = (key, fallback) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+/** Lowercases and strips a trailing slash, so config and Origin headers match. */
+const normalizeOrigin = (value) => (value ?? '').trim().replace(/[/]+$/, '');
+
 const NODE_ENV = str('NODE_ENV', 'development');
 const isProd = NODE_ENV === 'production';
 
@@ -22,7 +25,26 @@ export const env = {
   isTest: NODE_ENV === 'test',
 
   PORT: num('PORT', 5000),
-  CLIENT_URL: str('CLIENT_URL', 'http://localhost:5173'),
+  /**
+   * Primary client origin — used for links in emails.
+   *
+   * Trailing slashes are stripped. A browser's Origin header never carries one,
+   * so comparing against a configured "https://app.example.com/" fails every
+   * time, and the symptom is a permanent CORS 403 that looks like the value was
+   * never set at all.
+   */
+  CLIENT_URL: normalizeOrigin(str('CLIENT_URL', 'http://localhost:5173').split(',')[0]),
+
+  /**
+   * Every origin allowed to call the API, from a comma-separated CLIENT_URL.
+   *
+   * A list rather than one value because Vercel gives each preview deployment its
+   * own hostname, and a single-origin allowlist blocks all of them.
+   */
+  CLIENT_ORIGINS: str('CLIENT_URL', 'http://localhost:5173')
+    .split(',')
+    .map(normalizeOrigin)
+    .filter(Boolean),
   SERVER_ROOT: serverRoot,
 
   MONGODB_URI: str('MONGODB_URI'),
