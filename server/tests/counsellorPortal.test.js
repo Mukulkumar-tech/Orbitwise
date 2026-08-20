@@ -178,3 +178,23 @@ describe('counsellor portal authorization', () => {
     expect(response.status).toBe(401);
   });
 });
+
+describe('GET /api/appointments/counsellors', () => {
+  it('omits a counsellor whose user account no longer exists', async () => {
+    // Regression: deleting a counsellor user leaves the Counsellor row behind,
+    // and the list used to serve it with `userId: undefined` — a bookable-looking
+    // card with nothing to book against, plus an undefined React key.
+    const doomed = await createUserWithRole(ROLES.COUNSELLOR);
+    await Counsellor.create({ user: doomed.user._id, availability: [] });
+    await doomed.user.deleteOne();
+
+    const { accessToken } = await registerStudent();
+    const response = await agent()
+      .get('/api/appointments/counsellors')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.every((c) => Boolean(c.userId))).toBe(true);
+    expect(response.body.data.some((c) => c.userId === doomed.user._id.toString())).toBe(false);
+  });
+});

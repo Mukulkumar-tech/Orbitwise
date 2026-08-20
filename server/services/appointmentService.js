@@ -63,19 +63,24 @@ export const appointmentService = {
       .select('-assignedStudents')
       .lean();
 
-    return counsellors.map((c) => ({
-      _id: c._id,
-      userId: c.user?._id,
-      name: c.user?.name ?? 'Counsellor',
-      avatar: c.user?.avatar ?? '',
-      title: c.title,
-      bio: c.bio,
-      experienceYears: c.experienceYears,
-      countries: c.countries,
-      fields: c.fields,
-      languages: c.languages,
-      slotMinutes: c.slotMinutes,
-    }));
+    return counsellors
+      // A counsellor row whose user account is gone has no id to book against, so
+      // serving it renders a card that cannot do anything. Dropped here rather
+      // than defended against in the client: "bookable" is a property of the data.
+      .filter((c) => c.user?._id)
+      .map((c) => ({
+        _id: c._id,
+        userId: c.user._id,
+        name: c.user.name ?? 'Counsellor',
+        avatar: c.user.avatar ?? '',
+        title: c.title,
+        bio: c.bio,
+        experienceYears: c.experienceYears,
+        countries: c.countries,
+        fields: c.fields,
+        languages: c.languages,
+        slotMinutes: c.slotMinutes,
+      }));
   },
 
   /**

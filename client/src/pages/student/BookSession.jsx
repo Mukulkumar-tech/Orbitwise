@@ -175,7 +175,7 @@ export default function BookSession() {
                 const isSelected = counsellor.userId === counsellorUserId;
                 return (
                   <label
-                    key={counsellor.userId}
+                    key={counsellor._id}
                     className={cn(
                       'flex cursor-pointer items-start gap-3 rounded-2xl bg-surface p-4 shadow-sm transition-all duration-200 hairline',
                       // The radio itself is sr-only, so the ring has to come from the label.
