@@ -25,12 +25,14 @@ import StatTile from '../../components/cards/StatTile.jsx';
 
 import useQuery from '../../hooks/useQuery.js';
 import useApply from '../../hooks/useApply.js';
+import ScoreGapNotice from '../../components/shared/ScoreGapNotice.jsx';
 import studentService from '../../services/studentService.js';
 import { useAuth } from '../../hooks/useAuth.js';
 import { PATHS } from '../../constants/routes.js';
 import {
   JOURNEY_STAGE_LABELS,
   bandOf,
+  isTrustedMatch,
   degreeLabel,
   educationLabel,
   formatInr,
@@ -105,6 +107,9 @@ export default function Dashboard() {
   if (isError) return <ErrorState error={error} onRetry={refetch} />;
 
   const { profile, completion, guidance, journeyStage, stats, matches, insights } = data;
+  // The top match decides the tile, so the tile inherits its confidence.
+  const bestIsTrusted =
+    insights?.bestScore != null && isTrustedMatch({ confidence: insights.bestConfidence });
   const hasProfile = Boolean(profile.education?.level);
 
   /** The admission routes this student actually has, in order of immediacy. */
@@ -227,10 +232,16 @@ export default function Dashboard() {
         />
         <StatTile
           icon={Sparkles}
-          tone={insights?.bestScore >= 75 ? 'success' : 'warning'}
+          tone={bestIsTrusted && insights.bestScore >= 75 ? 'success' : 'warning'}
           label="Best match"
-          value={insights?.bestScore != null ? `${insights.bestScore}/100` : '—'}
-          hint={insights?.bestBand ? bandOf(insights.bestBand).label : 'Finish your profile to see this'}
+          // Suppressed rather than softened when confidence is low: a smaller or
+          // greyer number is still a number, and a student would act on it.
+          value={bestIsTrusted ? `${insights.bestScore}/100` : '—'}
+          hint={
+            bestIsTrusted
+              ? bandOf(insights.bestBand).label
+              : 'Finish your profile to see this'
+          }
         />
         <StatTile
           icon={Wallet}
@@ -282,7 +293,11 @@ export default function Dashboard() {
       )}
 
       {/* ─── Sharpen the score ────────────────────────────────────────────── */}
-      {hasProfile && insights?.unknowns?.length > 0 && (
+      {/* Only for the middle case: a score IS shown but rests partly on partial
+          credit. When confidence is too low to show a score at all, ScoreGapNotice
+          below says so instead — "your scores are provisional" would be describing
+          scores the page is deliberately not displaying. */}
+      {hasProfile && bestIsTrusted && insights?.unknowns?.length > 0 && (
         <Alert
           tone="info"
           title="Your scores are provisional"
@@ -336,20 +351,23 @@ export default function Dashboard() {
             }
           />
         ) : (
-          <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            {matches.map((course) => (
-              <CourseCard
-                key={course._id}
-                course={course}
-                isShortlisted={shortlistedIds.has(course._id)}
-                pending={pendingId === course._id}
-                onShortlistToggle={toggleShortlist}
-                onApply={apply}
-                appliedTo={hasApplied(course)}
-                applying={applyingSlug === course.slug}
-              />
-            ))}
-          </div>
+          <>
+            <ScoreGapNotice matches={matches} className="mt-5" />
+            <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+              {matches.map((course) => (
+                <CourseCard
+                  key={course._id}
+                  course={course}
+                  isShortlisted={shortlistedIds.has(course._id)}
+                  pending={pendingId === course._id}
+                  onShortlistToggle={toggleShortlist}
+                  onApply={apply}
+                  appliedTo={hasApplied(course)}
+                  applying={applyingSlug === course.slug}
+                />
+              ))}
+            </div>
+          </>
         )}
       </section>
 

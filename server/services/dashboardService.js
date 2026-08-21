@@ -53,6 +53,14 @@ export const dashboardService = {
       insights: {
         bestScore: matches[0]?.match.score ?? null,
         bestBand: matches[0]?.match.band ?? null,
+        /**
+         * How much of the top match rested on real answers, 0–1.
+         *
+         * Sent so the dashboard can decline to headline a number built mostly
+         * from fallback credit. Without it the tile reads "70/100 Possible
+         * match" to a student who has answered one question.
+         */
+        bestConfidence: matches[0]?.match.confidence ?? null,
         /** Typical annual cost across the top matches — the planning number. */
         typicalAnnualCostInr: average(matches.map((item) => item.match.costs.total)),
         /** How many of the top matches need no conditional offer. */

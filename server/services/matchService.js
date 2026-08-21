@@ -79,8 +79,14 @@ const phraseFor = (degreeLevel) => DEGREE_PHRASE[degreeLevel] ?? degreeLevel.toL
  *
  * `verdict` is what the UI colours on — 'strong' | 'fair' | 'weak' | 'unknown' —
  * so a component never re-derives thresholds the engine already applied.
+ *
+ * `fixable` separates the two very different reasons a dimension is unknown: the
+ * student has not told us yet, or the catalogue does not publish it. Only the
+ * first is worth asking them to fix — prompting someone to "complete your
+ * profile" because a university withheld its acceptance rate would be nonsense,
+ * and it is the distinction that decides whether a score can be shown at all.
  */
-const scorer = (key, label, ratio, verdict, reason, { watchout = false } = {}) => ({
+const scorer = (key, label, ratio, verdict, reason, { watchout = false, fixable = false } = {}) => ({
   key,
   label,
   score: Math.round(clamp01(ratio) * WEIGHTS[key] * 10) / 10,
@@ -88,6 +94,7 @@ const scorer = (key, label, ratio, verdict, reason, { watchout = false } = {}) =
   verdict,
   reason,
   watchout,
+  fixable: verdict === 'unknown' && fixable,
 });
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -119,7 +126,9 @@ function scoreAcademic(profile, course) {
   const { studentPercentage, required, label } = academicInputs(profile, course);
 
   if (studentPercentage == null) {
-    return scorer('academic', 'Academic fit', UNKNOWN_CREDIT, 'unknown', `Add your ${label} to score this properly.`);
+    return scorer('academic', 'Academic fit', UNKNOWN_CREDIT, 'unknown', `Add your ${label} to score this properly.`, {
+      fixable: true,
+    });
   }
   if (required == null) {
     return scorer('academic', 'Academic fit', 0.8, 'fair', 'No published marks cut-off — assessed on your full application.');
@@ -193,7 +202,14 @@ function scoreBudget(profile, course, country) {
   const { tuition, living, total } = annualCostInr(course, country);
 
   if (!budget) {
-    return scorer('budget', 'Budget fit', UNKNOWN_CREDIT, 'unknown', `Set your annual budget — this course runs about ${lakhs(total)} a year including living costs.`);
+    return scorer(
+      'budget',
+      'Budget fit',
+      UNKNOWN_CREDIT,
+      'unknown',
+      `Set your annual budget — this course runs about ${lakhs(total)} a year including living costs.`,
+      { fixable: true }
+    );
   }
 
   const ratio = budget / total;
@@ -251,7 +267,8 @@ function scoreEnglish(profile, course) {
       'English requirement',
       ratio,
       'unknown',
-      `Needs IELTS ${required} (or equivalent). ${test === 'planned' ? 'Book your test to firm this up.' : 'No test result on file yet.'}`
+      `Needs IELTS ${required} (or equivalent). ${test === 'planned' ? 'Book your test to firm this up.' : 'No test result on file yet.'}`,
+      { fixable: true }
     );
   }
 
@@ -278,7 +295,14 @@ function scoreDestination(profile, course, country) {
   const name = country?.name ?? course.countryCode;
 
   if (!preferences.length) {
-    return scorer('destination', 'Destination', UNKNOWN_CREDIT, 'unknown', `No destination preference set — ${name} is included as an option.`);
+    return scorer(
+      'destination',
+      'Destination',
+      UNKNOWN_CREDIT,
+      'unknown',
+      `No destination preference set — ${name} is included as an option.`,
+      { fixable: true }
+    );
   }
 
   const rank = preferences.indexOf(course.countryCode);
@@ -350,7 +374,14 @@ function scoreIntake(profile, course) {
   const intakes = course.intakes ?? [];
 
   if (!target?.season) {
-    return scorer('intake', 'Intake timing', UNKNOWN_CREDIT, 'unknown', `Intakes: ${intakes.join(', ') || 'not published'}. Pick a target intake to plan deadlines.`);
+    return scorer(
+      'intake',
+      'Intake timing',
+      UNKNOWN_CREDIT,
+      'unknown',
+      `Intakes: ${intakes.join(', ') || 'not published'}. Pick a target intake to plan deadlines.`,
+      { fixable: true }
+    );
   }
   if (!intakes.length) {
     return scorer('intake', 'Intake timing', 0.5, 'unknown', 'Intake months are not published for this course.');
@@ -476,6 +507,10 @@ export function scoreCourse(profile, course, { country, university } = {}) {
     scoreLikelihood(profile, course, university ?? course.university),
   ];
 
+  // Weight resting on answers the student has not given yet.
+  const fixableUnknowns = breakdown.filter((item) => item.fixable).sort((a, b) => b.max - a.max);
+  const fixableGap = fixableUnknowns.reduce((sum, item) => sum + item.max, 0);
+
   const raw = breakdown.reduce((sum, item) => sum + item.score, 0);
   const score = Math.round((raw / TOTAL_WEIGHT) * 100);
   const band = matchBand(score);
@@ -494,6 +529,22 @@ export function scoreCourse(profile, course, { country, university } = {}) {
     watchouts: breakdown.filter((item) => item.watchout).map((item) => item.reason),
     /** What the student still has to tell us before this score can be trusted. */
     unknowns: breakdown.filter((item) => item.verdict === 'unknown').map((item) => item.label),
+    /**
+     * Share of the weighting that was scored against real answers, 0–1.
+     *
+     * An unknown scorer contributes UNKNOWN_CREDIT (0.55) rather than nothing, so
+     * a profile with no answers still totals ~55 — which is why an empty profile
+     * used to render a confident-looking "56% match" on every course. That number
+     * is the fallback constant, not a measurement, and the client needs to be able
+     * to tell the difference.
+     *
+     * Catalogue gaps are excluded: they lower precision but the student cannot act
+     * on them, so counting them would nag about something unfixable.
+     */
+    confidence:
+      Math.round(((TOTAL_WEIGHT - fixableGap) / TOTAL_WEIGHT) * 100) / 100,
+    /** The specific answers that would sharpen this score, in weight order. */
+    missing: fixableUnknowns.map((item) => ({ key: item.key, label: item.label, reason: item.reason, weight: item.max })),
     costs: {
       ...costs,
       /** Positive when the annual cost exceeds the stated budget. */

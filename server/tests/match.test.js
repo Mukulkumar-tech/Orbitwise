@@ -411,3 +411,90 @@ describe('guidance', () => {
     expect(guidance.actions[0].step).toBe(1);
   });
 });
+
+/* ─── Confidence ───────────────────────────────────────────────────────────── */
+
+describe('score confidence', () => {
+  /** Only the education level answered — the state right after onboarding step 1. */
+  const bareProfile = () =>
+    profile({
+      goal: { degreeLevel: 'Bachelors', fields: [], intake: { season: null, year: null } },
+      destinations: [],
+      budget: { annualInr: null, fundingSource: null, needsScholarship: false },
+      english: { test: 'none', overall: null },
+    });
+
+  it('is 1 when every dimension was scored against a real answer', () => {
+    const result = score(profile());
+
+    expect(result.confidence).toBe(1);
+    expect(result.missing).toEqual([]);
+  });
+
+  it('falls well below 1 when the student has answered almost nothing', () => {
+    const result = score(bareProfile());
+
+    // Budget 20 + english 15 + destination 12 + intake 8 = 55 of 100 guessed.
+    expect(result.confidence).toBeLessThan(0.6);
+    expect(result.missing.map((item) => item.key).sort()).toEqual([
+      'budget',
+      'destination',
+      'english',
+      'intake',
+    ]);
+  });
+
+  it('still produces a plausible-looking score, which is exactly the problem', () => {
+    // With no answers, UNKNOWN_CREDIT (0.55) carries 55 of the 100 points, and the
+    // rest comes from the one thing that was answered. The result lands in normal
+    // territory — high enough to look researched — while resting mostly on a
+    // constant. The score alone cannot be told apart from a real one, which is why
+    // the client gates on confidence instead.
+    const result = score(bareProfile());
+
+    expect(result.score).toBeGreaterThan(50);
+    expect(result.confidence).toBeLessThan(0.6);
+    // The exact figure moves with the course and the marks on file, so it is not
+    // pinned here — only the gap between "looks confident" and "is confident".
+  });
+
+  it('does not count a catalogue gap against the student', () => {
+    // No published acceptance rate is the university's omission. Telling a student
+    // to complete their profile over it would be nonsense.
+    const result = score(profile(), course({ university: { ...university(), acceptanceRate: null } }));
+
+    expect(result.missing.some((item) => item.key === 'likelihood')).toBe(false);
+    expect(result.confidence).toBe(1);
+  });
+
+  it('orders the missing answers by how much they are worth', () => {
+    // So the UI can say "add your budget" first rather than "pick an intake".
+    const result = score(bareProfile());
+    const weights = result.missing.map((item) => item.weight);
+
+    expect(weights).toEqual([...weights].sort((a, b) => b - a));
+    expect(result.missing[0].key).toBe('budget');
+  });
+
+  it('rises as the student fills things in', () => {
+    const bare = score(bareProfile()).confidence;
+    const withBudget = score(
+      profile({
+        goal: { degreeLevel: 'Bachelors', fields: [], intake: { season: null, year: null } },
+        destinations: [],
+        english: { test: 'none', overall: null },
+      })
+    ).confidence;
+
+    expect(withBudget).toBeGreaterThan(bare);
+    expect(score(profile()).confidence).toBeGreaterThan(withBudget);
+  });
+
+  it('carries a reason on every missing answer, so the UI never has to invent copy', () => {
+    for (const item of score(bareProfile()).missing) {
+      expect(typeof item.reason).toBe('string');
+      expect(item.reason.trim()).not.toBe('');
+      expect(item.label.trim()).not.toBe('');
+    }
+  });
+});

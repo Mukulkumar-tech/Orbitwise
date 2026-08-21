@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
-import { Bookmark, BookmarkCheck, Building2, CalendarDays, CheckCircle2, ChevronDown, Clock, FileText, GraduationCap, Sparkles, TrendingUp, Wallet } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Bookmark, BookmarkCheck, Building2, CalendarDays, CheckCircle2, ChevronDown, Clock, FileText, GraduationCap, HelpCircle, Sparkles, TrendingUp, Wallet } from 'lucide-react';
 
 import Badge from '../ui/Badge.jsx';
 import Button from '../ui/Button.jsx';
@@ -11,9 +12,11 @@ import {
   fieldLabel,
   formatDuration,
   formatInr,
+  isTrustedMatch,
   routeOf,
 } from '../../constants/domain.js';
 import cn from '../../utils/cn.js';
+import { PATHS } from '../../constants/routes.js';
 
 /**
  * A recommended course.
@@ -43,6 +46,9 @@ export default function CourseCard({
   const band = bandOf(match?.band);
   const route = routeOf(match?.route);
   const annualCost = match?.costs.total;
+  // A payload without `confidence` is treated as trustworthy, so an older
+  // response never silently hides every score on the page.
+  const trusted = isTrustedMatch(match);
 
   return (
     <article
@@ -85,15 +91,30 @@ export default function CourseCard({
 
         {match && (
           <div className="flex shrink-0 flex-col items-center gap-1">
-            <ProgressRing
-              value={match.score}
-              size="md"
-              className={band.ring}
-              label={`OrbitMatch score ${match.score} out of 100 — ${match.bandLabel}`}
-            />
-            <span className={cn('rounded-full px-2 py-0.5 text-2xs font-semibold whitespace-nowrap', band.chip)}>
-              {match.bandLabel}
-            </span>
+            {trusted ? (
+              <>
+                <ProgressRing
+                  value={match.score}
+                  size="md"
+                  className={band.ring}
+                  label={`OrbitMatch score ${match.score} out of 100 — ${match.bandLabel}`}
+                />
+                <span className={cn('rounded-full px-2 py-0.5 text-2xs font-semibold whitespace-nowrap', band.chip)}>
+                  {match.bandLabel}
+                </span>
+              </>
+            ) : (
+              /* Deliberately no number. Showing one here would be presenting a
+                 fallback constant as a measurement — the single most misleading
+                 thing this card could do. */
+              <Link
+                to={PATHS.onboarding}
+                className="flex w-24 flex-col items-center gap-1.5 rounded-xl border border-dashed border-navy-300 p-2.5 text-center transition-colors hover:border-primary-500 hover:bg-primary-50"
+              >
+                <HelpCircle className="size-6 text-navy-400" aria-hidden="true" />
+                <span className="text-2xs leading-tight font-semibold text-navy-700">Score your profile</span>
+              </Link>
+            )}
           </div>
         )}
       </div>

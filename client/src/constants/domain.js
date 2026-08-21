@@ -162,6 +162,22 @@ export const MATCH_BANDS = {
   ambitious: { label: 'Ambitious match', tone: 'danger', ring: 'text-danger-600', chip: 'bg-danger-50 text-danger-700' },
 };
 
+/**
+ * Confidence below which a match score is not shown as a number.
+ *
+ * The engine gives an unanswered dimension partial credit rather than zero, so a
+ * near-empty profile still totals a plausible-looking figure that cannot be told
+ * apart from a researched one. 0.6 means more than 40 of the 100 points were
+ * guessed; a student who has answered only their education level sits at 0.45.
+ *
+ * Lives here rather than in a component because the card and the dashboard tile
+ * both gate on it, and two copies of a threshold drift.
+ */
+export const MIN_TRUSTED_CONFIDENCE = 0.6;
+
+/** True when a score rests on enough real answers to be worth showing. */
+export const isTrustedMatch = (match) => (match?.confidence ?? 1) >= MIN_TRUSTED_CONFIDENCE;
+
 export const bandOf = (key) => MATCH_BANDS[key] ?? MATCH_BANDS.ambitious;
 
 /** How an offer would be made, in words a student can act on. */
@@ -332,4 +348,32 @@ export const nextIntake = (seasons = [], from = new Date()) => {
   if (!candidates.length) return null;
   const { season, year } = candidates[0];
   return { season, year };
+};
+
+/**
+ * What a student actually has to supply to close each scoring gap.
+ *
+ * Keyed by scorer, not by its label: the engine's labels name the *dimension*
+ * ("Academic fit", "English requirement"), which reads as nonsense in a
+ * sentence asking someone to add something — "add your academic fit". These are
+ * the answers behind those dimensions, phrased the way the onboarding step asks
+ * for them.
+ */
+export const MATCH_GAP_LABELS = {
+  academic: 'marks',
+  budget: 'annual budget',
+  english: 'English test score',
+  destination: 'preferred destinations',
+  intake: 'target intake',
+  course: 'subject preference',
+};
+
+export const matchGapLabel = (key) => MATCH_GAP_LABELS[key] ?? humanize(key).toLowerCase();
+
+/** "marks, annual budget and English test score" — an Oxford-comma-free list. */
+export const joinReadable = (items = []) => {
+  const list = items.filter(Boolean);
+  if (list.length === 0) return '';
+  if (list.length === 1) return list[0];
+  return `${list.slice(0, -1).join(', ')} and ${list.at(-1)}`;
 };

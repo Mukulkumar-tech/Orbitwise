@@ -14,6 +14,7 @@ import CourseCard from '../../components/cards/CourseCard.jsx';
 
 import useQuery from '../../hooks/useQuery.js';
 import useApply from '../../hooks/useApply.js';
+import ScoreGapNotice from '../../components/shared/ScoreGapNotice.jsx';
 import studentService from '../../services/studentService.js';
 import catalogueService from '../../services/catalogueService.js';
 import { PATHS } from '../../constants/routes.js';
@@ -243,6 +244,7 @@ export default function Matches() {
         />
       ) : (
         <>
+          <ScoreGapNotice matches={items} className="mb-6" />
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             {items.map((course) => (
               <CourseCard
