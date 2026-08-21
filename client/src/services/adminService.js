@@ -18,6 +18,9 @@ export const adminService = {
 
   counsellors: (signal) => api.get('/admin/counsellors', { signal }).then((r) => r.data),
 
+  /** Creates the login and the counsellor profile in one call. */
+  createCounsellor: (payload) => api.post('/admin/counsellors', payload).then((r) => r.data),
+
   enquiries: (params = {}, signal) => api.get('/admin/enquiries', { params, signal }).then((r) => r),
 
   assignCounsellor: (studentId, counsellorUserId) =>

@@ -309,6 +309,80 @@ export const adminService = {
     return '﻿' + lines.join('\r\n') + '\r\n';
   },
 
+  /**
+   * Creates a counsellor login and its profile together.
+   *
+   * `User.create()` rather than a query-level write, because password hashing
+   * lives in a pre-save hook that insertMany/updateOne bypass entirely — seeding
+   * a counsellor through those would store the password in plaintext and every
+   * login would then fail against a bcrypt comparison.
+   *
+   * Created pre-verified: the verification email goes to an address the admin
+   * just typed, and a counsellor who cannot log in until they click a link the
+   * admin never sees is a support ticket, not a security control.
+   *
+   * The profile is created in the same call. A counsellor with no availability
+   * cannot be booked, so defaults matter — an empty profile would look like a
+   * broken feature rather than an unconfigured one.
+   */
+  async createCounsellor({ name, email, password, phone, ...profile }) {
+    const existing = await User.findOne({ email });
+    if (existing) {
+      throw ApiError.conflict('An account with that email already exists', {
+        errors: { email: 'Already in use' },
+      });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      phone: phone ?? '',
+      role: ROLES.COUNSELLOR,
+      isVerified: true,
+    });
+
+    let counsellor;
+    try {
+      counsellor = await Counsellor.create({
+        user: user._id,
+        title: profile.title || 'Education Counsellor',
+        bio: profile.bio ?? '',
+        experienceYears: profile.experienceYears ?? 0,
+        countries: profile.countries ?? [],
+        fields: profile.fields ?? [],
+        languages: profile.languages?.length ? profile.languages : ['English'],
+        slotMinutes: profile.slotMinutes ?? 30,
+        isAcceptingStudents: profile.isAcceptingStudents ?? true,
+        // Mon–Fri 10:00–17:00 unless told otherwise, so the account is bookable
+        // the moment it exists.
+        availability:
+          profile.availability?.length
+            ? profile.availability
+            : [1, 2, 3, 4, 5].map((dayOfWeek) => ({ dayOfWeek, startMinute: 10 * 60, endMinute: 17 * 60 })),
+      });
+    } catch (error) {
+      // Without this the login exists with no profile: it would authenticate,
+      // then 500 or silently self-create a default profile on first access.
+      await user.deleteOne();
+      throw error;
+    }
+
+    return {
+      _id: counsellor._id,
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      title: counsellor.title,
+      experienceYears: counsellor.experienceYears,
+      countries: counsellor.countries,
+      fields: counsellor.fields,
+      caseload: 0,
+      isAcceptingStudents: counsellor.isAcceptingStudents,
+      isActive: counsellor.isActive,
+    };
+  },
+
   /** Counsellors, with live caseload sizes. */
   async counsellors() {
     const rows = await Counsellor.find().populate('user', 'name email avatar isActive').lean();

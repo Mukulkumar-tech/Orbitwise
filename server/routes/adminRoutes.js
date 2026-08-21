@@ -3,10 +3,11 @@ import { z } from 'zod';
 
 import adminService from '../services/adminService.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { ok, paginated } from '../utils/apiResponse.js';
+import { ok, created, paginated } from '../utils/apiResponse.js';
 import validate from '../middleware/validate.js';
 import { protect, authorize } from '../middleware/auth.js';
-import { ROLES } from '../constants/index.js';
+import { ROLES, STUDY_FIELDS } from '../constants/index.js';
+import { emailSchema, passwordSchema } from '../validators/authValidators.js';
 
 const objectId = z.string().trim().regex(/^[0-9a-fA-F]{24}$/, 'Invalid identifier');
 
@@ -99,6 +100,49 @@ adminRoutes.patch(
 adminRoutes.get(
   '/counsellors',
   asyncHandler(async (_req, res) => ok(res, await adminService.counsellors()))
+);
+
+/**
+ * Creating a counsellor login.
+ *
+ * Reuses the auth module's own email and password schemas rather than restating
+ * them, so an admin-created account can never end up held to a weaker password
+ * rule than a self-registered one.
+ */
+adminRoutes.post(
+  '/counsellors',
+  validate({
+    body: z.object({
+      name: z.string().trim().min(2, 'Name is required').max(80),
+      email: emailSchema,
+      password: passwordSchema,
+      phone: z.string().trim().max(20).optional(),
+      title: z.string().trim().max(80).optional(),
+      bio: z.string().trim().max(600).optional(),
+      experienceYears: z.coerce.number().int().min(0).max(60).optional(),
+      countries: z.array(z.string().trim().length(2).toUpperCase()).max(20).optional(),
+      fields: z.array(z.enum(STUDY_FIELDS)).max(12).optional(),
+      languages: z.array(z.string().trim().min(1).max(30)).max(10).optional(),
+      slotMinutes: z.coerce.number().int().min(15).max(120).optional(),
+      isAcceptingStudents: z.coerce.boolean().optional(),
+      availability: z
+        .array(
+          z
+            .object({
+              dayOfWeek: z.coerce.number().int().min(0).max(6),
+              startMinute: z.coerce.number().int().min(0).max(1439),
+              endMinute: z.coerce.number().int().min(1).max(1440),
+            })
+            // Rejected here rather than stored: a window that ends before it
+            // starts generates no slots, so it would look like availability was
+            // silently ignored.
+            .refine((window) => window.endMinute > window.startMinute, { message: 'End must be after start' })
+        )
+        .max(21)
+        .optional(),
+    }),
+  }),
+  asyncHandler(async (req, res) => created(res, await adminService.createCounsellor(req.body)))
 );
 
 adminRoutes.get(

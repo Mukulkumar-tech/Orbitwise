@@ -272,7 +272,7 @@ visible focus ring, form errors are wired through `aria-invalid` + `aria-describ
 | 10 · Documents — upload, review workflow, authenticated streaming, storage adapter | ✅ Complete |
 | 11 · Scholarships + cost calculator — scored matching, deadline tracker, full cost engine | ✅ Complete |
 | 12 · Counsellor portal — caseload worklist, document review, appointment booking with conflict detection | ✅ Complete |
-| 13 · Admin portal — six Recharts visuals, student table with server-side filtering, CSV export, counsellor assignment | ✅ Complete |
+| 13 · Admin portal — six Recharts visuals, student table with server-side filtering, CSV export, counsellor assignment and creation | ✅ Complete |
 | 14 · Polish, a11y, performance, hardening | ✅ Complete — zero WCAG 2.1 AA violations and zero mobile overflow across all 33 routes, measured with axe-core |
 
 Not built, and named rather than implied: messaging (`Conversation`/`Message`), notifications,

@@ -1,11 +1,14 @@
-import { Globe2, UserCog, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Globe2, UserCog, UserPlus, Users } from 'lucide-react';
 
 import Badge from '../../components/ui/Badge.jsx';
 import Avatar from '../../components/ui/Avatar.jsx';
 import Skeleton from '../../components/ui/Skeleton.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
+import Button from '../../components/ui/Button.jsx';
 import useQuery from '../../hooks/useQuery.js';
+import NewCounsellorForm from './NewCounsellorForm.jsx';
 import adminService from '../../services/adminService.js';
 import { fieldLabel } from '../../constants/domain.js';
 
@@ -18,6 +21,7 @@ import { fieldLabel } from '../../constants/domain.js';
  */
 export default function AdminCounsellors() {
   const { data, isLoading, isError, error, refetch } = useQuery((signal) => adminService.counsellors(signal), []);
+  const [creating, setCreating] = useState(false);
 
   if (isLoading) {
     return (
@@ -38,23 +42,50 @@ export default function AdminCounsellors() {
 
   return (
     <div>
-      <header>
-        <h1 className="font-display text-2xl font-semibold tracking-[-0.02em] text-navy-950 md:text-3xl">
-          Counsellors
-        </h1>
-        <p className="mt-2 text-sm text-navy-500">
-          {data.length} counsellor{data.length === 1 ? '' : 's'} carrying {totalCaseload} student
-          {totalCaseload === 1 ? '' : 's'}. Busiest first.
-        </p>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl font-semibold tracking-[-0.02em] text-navy-950 md:text-3xl">
+            Counsellors
+          </h1>
+          <p className="mt-2 text-sm text-navy-500">
+            {data.length} counsellor{data.length === 1 ? '' : 's'} carrying {totalCaseload} student
+            {totalCaseload === 1 ? '' : 's'}. Busiest first.
+          </p>
+        </div>
+        {!creating && (
+          <Button leftIcon={UserPlus} onClick={() => setCreating(true)}>
+            New counsellor
+          </Button>
+        )}
       </header>
 
-      {data.length === 0 ? (
-        <EmptyState
-          className="mt-8"
-          icon={UserCog}
-          title="No counsellors yet"
-          description="A counsellor profile is created the first time someone with that role signs in."
+      {creating && (
+        <NewCounsellorForm
+          onCancel={() => setCreating(false)}
+          onCreated={() => {
+            setCreating(false);
+            // Refetch rather than splicing the new row in: the list is sorted by
+            // caseload server-side, so appending locally would put a new
+            // counsellor in the wrong place until the next load.
+            refetch();
+          }}
         />
+      )}
+
+      {data.length === 0 ? (
+        !creating && (
+          <EmptyState
+            className="mt-8"
+            icon={UserCog}
+            title="No counsellors yet"
+            description="Add one to start assigning students and taking bookings."
+            action={
+              <Button leftIcon={UserPlus} onClick={() => setCreating(true)}>
+                New counsellor
+              </Button>
+            }
+          />
+        )
       ) : (
         <ul className="mt-7 space-y-3">
           {data.map((counsellor) => (

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { agent, createUserWithRole, registerStudent } from './helpers.js';
 import Counsellor from '../models/Counsellor.js';
 import StudentProfile from '../models/StudentProfile.js';
+import User from '../models/User.js';
 import { ROLES } from '../constants/index.js';
 
 let token;
@@ -286,5 +287,154 @@ describe('GET /api/admin/counsellors', () => {
     expect(response.body.data).toHaveLength(2);
     expect(response.body.data[0].caseload).toBe(2);
     expect(response.body.data[1].caseload).toBe(0);
+  });
+});
+
+describe('POST /api/admin/counsellors', () => {
+  const post = (path) => agent().post(path).set('Authorization', `Bearer ${token}`);
+
+  const NEW = {
+    name: 'Deepa Menon',
+    email: 'deepa.menon@orbitwise.dev',
+    password: 'orbitwise2027',
+    title: 'Senior Education Counsellor',
+    experienceYears: 9,
+    countries: ['ca', 'de'],
+    fields: ['computer_science'],
+    languages: ['English', 'Malayalam'],
+  };
+
+  it('creates a login that can actually sign in', async () => {
+    // The whole point of the feature. User.create() is used rather than a
+    // query-level write precisely because password hashing lives in a pre-save
+    // hook that insertMany/updateOne bypass — through those the password would
+    // be stored in plaintext and this login would fail.
+    const created = await post('/api/admin/counsellors').send(NEW);
+    expect(created.status).toBe(201);
+
+    const login = await agent()
+      .post('/api/auth/login')
+      .send({ email: NEW.email, password: NEW.password });
+
+    expect(login.status).toBe(200);
+    expect(login.body.data.user.role).toBe(ROLES.COUNSELLOR);
+  });
+
+  it('creates the counsellor profile alongside the login', async () => {
+    const response = await post('/api/admin/counsellors').send(NEW);
+
+    expect(response.status).toBe(201);
+    expect(response.body.data.title).toBe(NEW.title);
+    expect(response.body.data.caseload).toBe(0);
+
+    const profile = await Counsellor.findOne({ user: response.body.data.userId });
+    expect(profile).not.toBeNull();
+    // A counsellor with no availability cannot be booked, which would look like
+    // a broken feature rather than an unconfigured one.
+    expect(profile.availability.length).toBe(5);
+    expect(profile.countries).toEqual(['CA', 'DE']);
+  });
+
+  it('is immediately bookable and shows up in both admin and student lists', async () => {
+    const created = await post('/api/admin/counsellors').send(NEW);
+
+    const adminList = await get('/api/admin/counsellors');
+    expect(adminList.body.data.some((c) => c.email === NEW.email)).toBe(true);
+
+    // The student-facing picker, which only lists accepting + active counsellors.
+    const { accessToken } = await registerStudent();
+    const bookable = await agent()
+      .get('/api/appointments/counsellors')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(bookable.body.data.some((c) => c.userId === created.body.data.userId.toString())).toBe(true);
+  });
+
+  it('is created pre-verified, so the account is usable without an email round trip', async () => {
+    const response = await post('/api/admin/counsellors').send(NEW);
+    const user = await User.findById(response.body.data.userId).select('isVerified role');
+
+    expect(user.isVerified).toBe(true);
+    expect(user.role).toBe(ROLES.COUNSELLOR);
+  });
+
+  it('refuses a duplicate email with a field-keyed error', async () => {
+    await post('/api/admin/counsellors').send(NEW).expect(201);
+
+    const duplicate = await post('/api/admin/counsellors').send(NEW);
+
+    expect(duplicate.status).toBe(409);
+    expect(duplicate.body.errors?.email).toBeTruthy();
+  });
+
+  it('holds an admin-created account to the same password rule as self-registration', async () => {
+    // Reusing passwordSchema is the reason this passes; restating the rule in the
+    // admin router is how it would quietly drift.
+    const weak = await post('/api/admin/counsellors').send({ ...NEW, password: 'short' });
+
+    expect(weak.status).toBe(400);
+    expect(weak.body.errors?.password).toBeTruthy();
+  });
+
+  it('rejects an unknown study field rather than storing it', async () => {
+    const response = await post('/api/admin/counsellors').send({ ...NEW, fields: ['quantum_basket_weaving'] });
+    expect(response.status).toBe(400);
+  });
+
+  it('cannot be used to mint an admin', async () => {
+    // Role is set by the service, not the payload. Zod strips unknown keys, so a
+    // client asking for `role: admin` has it discarded before the service runs.
+    const response = await post('/api/admin/counsellors').send({ ...NEW, role: ROLES.ADMIN });
+
+    expect(response.status).toBe(201);
+    const user = await User.findById(response.body.data.userId).select('role');
+    expect(user.role).toBe(ROLES.COUNSELLOR);
+  });
+
+it('refuses an impossible availability window before creating anything', async () => {
+    // Validation runs ahead of any write, so a rejected payload cannot leave a
+    // login behind with no profile. (The service also rolls the user back if
+    // profile creation throws, but that path needs a failure which passes
+    // validation and so is not reachable from here.)
+    const backwards = await post('/api/admin/counsellors').send({
+      ...NEW,
+      email: 'orphan.check@orbitwise.dev',
+      availability: [{ dayOfWeek: 1, startMinute: 600, endMinute: 300 }],
+    });
+
+    expect(backwards.status).toBe(400);
+    expect(await User.findOne({ email: 'orphan.check@orbitwise.dev' })).toBeNull();
+
+    const outOfRange = await post('/api/admin/counsellors').send({
+      ...NEW,
+      email: 'orphan.check@orbitwise.dev',
+      availability: [{ dayOfWeek: 9, startMinute: 0, endMinute: 60 }],
+    });
+
+    expect(outOfRange.status).toBe(400);
+    expect(await User.findOne({ email: 'orphan.check@orbitwise.dev' })).toBeNull();
+  });
+
+  it('stores availability the admin supplied instead of the Mon-Fri default', async () => {
+    const response = await post('/api/admin/counsellors').send({
+      ...NEW,
+      availability: [{ dayOfWeek: 6, startMinute: 9 * 60, endMinute: 13 * 60 }],
+    });
+
+    expect(response.status).toBe(201);
+    const profile = await Counsellor.findOne({ user: response.body.data.userId });
+    expect(profile.availability).toHaveLength(1);
+    expect(profile.availability[0].dayOfWeek).toBe(6);
+  });
+
+  it('refuses a counsellor trying to create another counsellor', async () => {
+    const { accessToken } = await createUserWithRole(ROLES.COUNSELLOR);
+
+    const response = await agent()
+      .post('/api/admin/counsellors')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(NEW);
+
+    expect(response.status).toBe(403);
   });
 });

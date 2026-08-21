@@ -496,3 +496,47 @@ rediscovered. Reverting a single token makes it fail; that was checked.
 cannot judge whether focus order is sensible, whether alt text is *accurate*, or
 whether an interaction works by keyboard alone. Zero automated violations is a
 floor, not a certificate.
+
+---
+
+## 11. Creating a counsellor account
+
+Registration hardcodes `role: 'student'` and Zod strips a client-supplied `role`,
+which is the right default — but it left no way to create a counsellor at all.
+The seeder made one, and that was it. `POST /api/admin/counsellors` closes that,
+admin-only at the router level.
+
+Three details worth pointing at:
+
+**It reuses the auth module's own `emailSchema` and `passwordSchema` rather than
+restating them.** An admin-created login held to a weaker password rule than a
+self-registered one is the kind of asymmetry nobody notices until it matters. A
+test asserts a short password is refused, and it passes *because* the schema is
+shared — restating the rule in the admin router is exactly how it would drift.
+
+**`User.create()`, not `insertMany` or `updateOne`.** Password hashing lives in a
+`pre('save')` hook that the query-level writers bypass entirely. Through those the
+password would be stored in plaintext and the new login would fail against a
+bcrypt comparison — so the test that matters is not "did a document appear" but
+"can this account actually sign in".
+
+**The profile is created in the same call, with Mon–Fri 10:00–17:00 defaults.** A
+counsellor with no availability cannot be booked, which reads as a broken feature
+rather than an unconfigured one. If profile creation throws, the user is deleted
+again: a login with no profile would authenticate and then break on first access.
+That rollback is defensive code and is *not* covered by a test — triggering it
+needs a failure that passes validation, which cannot be produced from outside the
+service. Said plainly rather than implied by a passing suite.
+
+The account is created pre-verified. The verification email would go to an address
+the admin just typed, and a counsellor who cannot log in until they click a link
+the admin never sees is a support ticket, not a security control.
+
+**The admin sets the initial password.** Generating one would need a delivery
+mechanism, and returning a plaintext credential in an API response is worse than
+an admin handing it over and the counsellor changing it. The form says so.
+
+Verified in the browser: admin creates the account, the list goes 1 → 2 with the
+new counsellor at 0 students, a duplicate email binds a 409 onto the email field
+rather than a banner, the new account signs in and lands on its own caseload, and
+a student is immediately offered them in the booking picker.
