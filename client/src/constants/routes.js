@@ -51,6 +51,7 @@ export const PATHS = {
   counsellorStudent: (id = ':id') => `/counsellor/students/${id}`,
   counsellorReview: '/counsellor/review',
   counsellorAppointments: '/counsellor/appointments',
+  counsellorApplication: (id = ':id') => `/counsellor/applications/${id}`,
 
   // ─── Admin portal ───────────────────────────────────────────
   adminHome: '/admin',

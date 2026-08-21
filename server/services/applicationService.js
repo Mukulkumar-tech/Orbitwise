@@ -1,6 +1,7 @@
 import Application from '../models/Application.js';
 import Course from '../models/Course.js';
 import Country from '../models/Country.js';
+import Counsellor from '../models/Counsellor.js';
 import ApiError from '../utils/ApiError.js';
 import {
   APPLICATION_STATUS,
@@ -68,6 +69,39 @@ const buildStages = (application) => {
   return APPLICATION_STAGES.map((stage) => ({ ...stage, state: stageState[stage.key] ?? 'pending' }));
 };
 
+/**
+ * Refuses unless the caller is entitled to this application.
+ *
+ * - student: must own it
+ * - counsellor: the student must be on their caseload *now*, not when the
+ *   application was created
+ * - admin: always
+ *
+ * Shared by the read and both write paths deliberately. The two writes
+ * previously checked only students, which let any counsellor transition any
+ * application in the system.
+ */
+async function assertCanAccess(application, { userId, role }) {
+  if (role === ROLES.ADMIN) return;
+
+  if (role === ROLES.STUDENT) {
+    if (application.student.toString() !== userId.toString()) {
+      throw ApiError.forbidden('That application is not yours');
+    }
+    return;
+  }
+
+  if (role === ROLES.COUNSELLOR) {
+    // Imported lazily: counsellorService imports profileService, which keeps the
+    // module graph acyclic at load time.
+    const { counsellorService } = await import('./counsellorService.js');
+    await counsellorService.assertOnCaseload(userId, application.student.toString());
+    return;
+  }
+
+  throw ApiError.forbidden('That application is not yours');
+}
+
 export const applicationService = {
   /**
    * Starts an application for a course.
@@ -90,8 +124,15 @@ export const applicationService = {
     const country = await Country.findOne({ code: course.countryCode }).lean();
     const startedBy = actor?.role === ROLES.COUNSELLOR ? ROLES.COUNSELLOR : ROLES.STUDENT;
 
+    // Denormalised for the counsellor's own queries and for documentService's
+    // "is this counsellor involved" check. Authorization does NOT read this
+    // field — assertCanAccess uses the live caseload — so a stale stamp after a
+    // reassignment is a cosmetic inaccuracy rather than an access bug.
+    const owningCounsellor = await Counsellor.findOne({ assignedStudents: studentId }).select('user').lean();
+
     const application = await Application.create({
       student: studentId,
+      counsellor: owningCounsellor?.user ?? null,
       course: course._id,
       university: course.university?._id ?? null,
       snapshot: {
@@ -152,13 +193,7 @@ export const applicationService = {
     const application = await Application.findById(id);
     if (!application) throw ApiError.notFound('Application not found');
 
-    const isOwner = application.student.toString() === userId.toString();
-    const isAssignedCounsellor = application.counsellor?.toString() === userId.toString();
-
-    if (role === ROLES.STUDENT && !isOwner) throw ApiError.forbidden('That application is not yours');
-    if (role === ROLES.COUNSELLOR && !isAssignedCounsellor) {
-      throw ApiError.forbidden('You are not assigned to this application');
-    }
+    await assertCanAccess(application, { userId, role });
 
     const allowed = APPLICATION_TRANSITIONS[application.status] ?? [];
     const availableTransitions = (role === ROLES.STUDENT
@@ -186,8 +221,7 @@ export const applicationService = {
     const application = await Application.findById(id);
     if (!application) throw ApiError.notFound('Application not found');
 
-    const isOwner = application.student.toString() === userId.toString();
-    if (role === ROLES.STUDENT && !isOwner) throw ApiError.forbidden('That application is not yours');
+    await assertCanAccess(application, { userId, role });
 
     if (application.status === status) {
       throw ApiError.badRequest(`This application is already ${APPLICATION_STATUS_LABELS[status]}`);
@@ -225,8 +259,7 @@ export const applicationService = {
     const application = await Application.findById(id);
     if (!application) throw ApiError.notFound('Application not found');
 
-    const isOwner = application.student.toString() === userId.toString();
-    if (role === ROLES.STUDENT && !isOwner) throw ApiError.forbidden('That application is not yours');
+    await assertCanAccess(application, { userId, role });
 
     application.notes.push({
       body,

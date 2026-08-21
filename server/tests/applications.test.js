@@ -204,8 +204,15 @@ describe('notes', () => {
     const { body } = await startApplication(owner.accessToken);
     const id = body.data._id;
 
-    // Assign the counsellor directly; assignment flows arrive with Phase 12.
-    await Application.findByIdAndUpdate(id, { counsellor: counsellor.user._id });
+    // Assign through the caseload, which is what actually grants access now.
+    // Stamping Application.counsellor is no longer sufficient: authorization
+    // reads Counsellor.assignedStudents so that an admin reassignment takes
+    // effect immediately.
+    const { default: Counsellor } = await import('../models/Counsellor.js');
+    await Counsellor.create({
+      user: counsellor.user._id,
+      assignedStudents: [owner.user._id ?? owner.user.id],
+    });
 
     await agent()
       .post(`/api/applications/${id}/notes`)
@@ -399,5 +406,133 @@ describe('POST /api/applications — counsellor acting for a student', () => {
     const response = await startFor(admin.accessToken, (student.user._id ?? student.user.id).toString());
 
     expect(response.status).toBe(403);
+  });
+});
+
+describe('counsellor access is scoped to their caseload', () => {
+  const assign = async (counsellorUserId, studentId) => {
+    const { default: Counsellor } = await import('../models/Counsellor.js');
+    await Counsellor.findOneAndUpdate(
+      { user: counsellorUserId },
+      { $addToSet: { assignedStudents: studentId } },
+      { upsert: true, setDefaultsOnInsert: true }
+    );
+  };
+
+  /** A student with one application, plus a counsellor who is NOT assigned. */
+  const setup = async () => {
+    const student = await registerStudent();
+    const studentId = (student.user._id ?? student.user.id).toString();
+    const created = await agent()
+      .post('/api/applications')
+      .set('Authorization', `Bearer ${student.accessToken}`)
+      .send({ courseSlug });
+    const outsider = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(outsider.user._id, (await registerStudent()).user._id); // has a caseload, just not this student
+    return { student, studentId, applicationId: created.body.data._id, outsider };
+  };
+
+  it('refuses a transition by a counsellor the student is not assigned to', async () => {
+    // The hole this closes: transition() only ownership-checked students, so any
+    // counsellor could move any application in the system to "offer received".
+    const { applicationId, outsider } = await setup();
+
+    const response = await agent()
+      .patch(`/api/applications/${applicationId}/status`)
+      .set('Authorization', `Bearer ${outsider.accessToken}`)
+      .send({ status: 'documents_pending' });
+
+    expect(response.status).toBe(403);
+  });
+
+  it('refuses a note by a counsellor the student is not assigned to', async () => {
+    const { applicationId, outsider } = await setup();
+
+    const response = await agent()
+      .post(`/api/applications/${applicationId}/notes`)
+      .set('Authorization', `Bearer ${outsider.accessToken}`)
+      .send({ body: 'Should never land', isPrivate: true });
+
+    expect(response.status).toBe(403);
+  });
+
+  it('refuses a read by a counsellor the student is not assigned to', async () => {
+    const { applicationId, outsider } = await setup();
+
+    const response = await agent()
+      .get(`/api/applications/${applicationId}`)
+      .set('Authorization', `Bearer ${outsider.accessToken}`);
+
+    expect(response.status).toBe(403);
+  });
+
+  it('allows the assigned counsellor to read, transition and annotate', async () => {
+    const { studentId, applicationId } = await setup();
+    const mine = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(mine.user._id, studentId);
+
+    const read = await agent()
+      .get(`/api/applications/${applicationId}`)
+      .set('Authorization', `Bearer ${mine.accessToken}`);
+    expect(read.status).toBe(200);
+
+    const moved = await agent()
+      .patch(`/api/applications/${applicationId}/status`)
+      .set('Authorization', `Bearer ${mine.accessToken}`)
+      .send({ status: 'documents_pending', note: 'Need your transcript' });
+    expect(moved.status).toBe(200);
+    expect(moved.body.data.status).toBe('documents_pending');
+    expect(moved.body.data.timeline.at(-1).actor).toBe('counsellor');
+
+    const noted = await agent()
+      .post(`/api/applications/${applicationId}/notes`)
+      .set('Authorization', `Bearer ${mine.accessToken}`)
+      .send({ body: 'Internal: borderline on funding', isPrivate: true });
+    expect(noted.status).toBe(200);
+  });
+
+  it('reads the caseload live, so a reassigned student moves with them', async () => {
+    // Authorization must not key off the counsellor stamped at creation: an admin
+    // reassignment would otherwise leave the old counsellor with access and lock
+    // the new one out.
+    const { studentId, applicationId } = await setup();
+    const { default: Counsellor } = await import('../models/Counsellor.js');
+
+    const first = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(first.user._id, studentId);
+    const second = await createUserWithRole(ROLES.COUNSELLOR);
+    await Counsellor.create({ user: second.user._id });
+
+    // Reassign, exactly as the admin portal does.
+    await Counsellor.updateMany({ assignedStudents: studentId }, { $pull: { assignedStudents: studentId } });
+    await assign(second.user._id, studentId);
+
+    const oldOne = await agent()
+      .get(`/api/applications/${applicationId}`)
+      .set('Authorization', `Bearer ${first.accessToken}`);
+    expect(oldOne.status).toBe(403);
+
+    const newOne = await agent()
+      .get(`/api/applications/${applicationId}`)
+      .set('Authorization', `Bearer ${second.accessToken}`);
+    expect(newOne.status).toBe(200);
+  });
+
+  it('keeps a counsellor-private note out of the student payload', async () => {
+    const { student, studentId, applicationId } = await setup();
+    const mine = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(mine.user._id, studentId);
+
+    await agent()
+      .post(`/api/applications/${applicationId}/notes`)
+      .set('Authorization', `Bearer ${mine.accessToken}`)
+      .send({ body: 'Internal only', isPrivate: true });
+
+    const asStudent = await agent()
+      .get(`/api/applications/${applicationId}`)
+      .set('Authorization', `Bearer ${student.accessToken}`);
+
+    expect(asStudent.status).toBe(200);
+    expect(JSON.stringify(asStudent.body.data)).not.toContain('Internal only');
   });
 });

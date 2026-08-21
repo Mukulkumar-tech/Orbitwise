@@ -48,7 +48,7 @@ const Shortlist = lazy(() => import('./pages/student/Shortlist.jsx'));
 const Compare = lazy(() => import('./pages/student/Compare.jsx'));
 const Applications = lazy(() => import('./pages/student/Applications.jsx'));
 const Documents = lazy(() => import('./pages/student/Documents.jsx'));
-const ApplicationDetail = lazy(() => import('./pages/student/ApplicationDetail.jsx'));
+const ApplicationDetail = lazy(() => import('./pages/shared/ApplicationDetail.jsx'));
 const Profile = lazy(() => import('./pages/student/Profile.jsx'));
 const BookSession = lazy(() => import('./pages/student/BookSession.jsx'));
 const Appointments = lazy(() => import('./pages/shared/Appointments.jsx'));
@@ -141,6 +141,20 @@ export default function App() {
             <Route path={PATHS.counsellorReview} element={<ReviewQueue />} />
             {/* Same component as the student view; the API scopes results by role. */}
             <Route path={PATHS.counsellorAppointments} element={<Appointments />} />
+          {/* Same page as the student sees. The server filters
+              availableTransitions by role, so the counsellor gets the moves
+              only they can make without the client knowing the rule. */}
+          <Route
+            path={PATHS.counsellorApplication()}
+            element={
+              <ApplicationDetail
+                backTo={PATHS.counsellorStudents}
+                backLabel="My students"
+                allowPrivateNotes
+                audience="staff"
+              />
+            }
+          />
           </Route>
         </Route>
 

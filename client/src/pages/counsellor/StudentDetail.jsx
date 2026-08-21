@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Bookmark, CalendarClock, Check, FilePlus2, FileText, GraduationCap, Mail, Phone } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark, CalendarClock, Check, FilePlus2, FileText, GraduationCap, Mail, Phone } from 'lucide-react';
 
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
@@ -239,25 +239,36 @@ export default function CounsellorStudentDetail() {
             ) : (
               <ul className="mt-4 space-y-3">
                 {applications.map((application) => (
-                  <li
-                    key={application._id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-navy-50 p-3.5"
-                  >
-                    {/* Read off the snapshot, not a populated Course: an application is
-                        a historical record and must render the terms it was made under. */}
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-navy-950">
-                        {application.snapshot?.courseTitle}
-                      </p>
-                      <p className="truncate text-xs text-navy-500">
-                        {application.snapshot?.universityName} ·{' '}
-                        {degreeLabel(application.snapshot?.degreeLevel)}
-                        {application.intake?.season ? ` · ${application.intake.season} ${application.intake.year}` : ''}
-                      </p>
-                    </div>
-                    <Badge tone={APPLICATION_STATUS_TONES[application.status] ?? 'neutral'} size="sm">
-                      {applicationStatusLabel(application.status)}
-                    </Badge>
+                  <li key={application._id}>
+                    {/* Links through to the shared detail page, which is where the
+                        status can actually be moved and notes added. */}
+                    <Link
+                      to={PATHS.counsellorApplication(application._id)}
+                      className="group flex flex-wrap items-center justify-between gap-3 rounded-xl bg-navy-50 p-3.5 transition-colors hover:bg-navy-100"
+                    >
+                      {/* Read off the snapshot, not a populated Course: an application
+                          is a historical record and must render the terms it was made
+                          under. */}
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-navy-950">
+                          {application.snapshot?.courseTitle}
+                        </p>
+                        <p className="truncate text-xs text-navy-500">
+                          {application.snapshot?.universityName} ·{' '}
+                          {degreeLabel(application.snapshot?.degreeLevel)}
+                          {application.intake?.season ? ` · ${application.intake.season} ${application.intake.year}` : ''}
+                        </p>
+                      </div>
+                      <span className="flex items-center gap-2">
+                        <Badge tone={APPLICATION_STATUS_TONES[application.status] ?? 'neutral'} size="sm">
+                          {applicationStatusLabel(application.status)}
+                        </Badge>
+                        <ArrowRight
+                          className="size-4 text-primary-700 transition-transform group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </Link>
                   </li>
                 ))}
               </ul>
