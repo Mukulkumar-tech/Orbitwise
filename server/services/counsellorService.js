@@ -39,6 +39,23 @@ export const counsellorService = {
   getOrCreateProfile,
 
   /**
+   * Throws unless the student is on this counsellor's caseload.
+   *
+   * Returns the id so callers can use it inline. Extracted from `student()`
+   * once application creation needed the same boundary — a second copy of this
+   * check is a second place for it to be omitted.
+   */
+  async assertOnCaseload(userId, studentId) {
+    if (!studentId) throw ApiError.badRequest('Name the student this is for');
+
+    const { ids } = await assignedIds(userId);
+    if (!ids.some((id) => id.toString() === studentId.toString())) {
+      throw ApiError.forbidden('That student is not assigned to you');
+    }
+    return studentId;
+  },
+
+  /**
    * The dashboard: what needs attention, not just what exists.
    *
    * Counts are computed in Mongo rather than by loading documents and filtering
@@ -143,14 +160,15 @@ export const counsellorService = {
    * id in the URL grants nothing on its own.
    */
   async student(userId, studentId) {
-    const { ids } = await assignedIds(userId);
-    if (!ids.some((id) => id.toString() === studentId.toString())) {
-      throw ApiError.forbidden('That student is not assigned to you');
-    }
+    await this.assertOnCaseload(userId, studentId);
 
     const [user, profile, applications, documents, appointments] = await Promise.all([
       User.findById(studentId).select('name email phone avatar createdAt lastLogin').lean(),
-      StudentProfile.findOne({ user: studentId }).lean(),
+      // Shortlist populated: it is the counsellor's candidate list when starting
+      // an application for this student, so ids alone would be useless.
+      StudentProfile.findOne({ user: studentId })
+        .populate('shortlist', 'title slug universityName countryCode degreeLevel tuitionPerYearInr isActive')
+        .lean(),
       Application.find({ student: studentId }).sort({ updatedAt: -1 }).lean(),
       Document.find({ student: studentId }).sort({ type: 1 }).lean(),
       Appointment.find({ student: studentId, counsellor: userId }).sort({ startsAt: -1 }).limit(20).lean(),

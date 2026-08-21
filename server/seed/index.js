@@ -3,7 +3,7 @@ import { env } from '../config/env.js';
 import logger from '../config/logger.js';
 import { seedUsers, DEMO_PASSWORD } from './seedUsers.js';
 import { seedCatalogue } from './seedCatalogue.js';
-import { seedCaseload, seedApplications } from './seedCaseload.js';
+import { seedCaseload, seedApplications, seedShortlists } from './seedCaseload.js';
 
 /**
  * Seed runner — `npm run seed`.
@@ -39,6 +39,7 @@ async function run() {
   const kept = users.filter((user) => user.status === 'kept').length;
   const catalogue = await seedCatalogue({ force });
   const caseload = await seedCaseload({ force });
+  const shortlists = await seedShortlists({ force });
   const applications = await seedApplications({ force });
 
   logger.banner('Seed complete', [
@@ -51,6 +52,9 @@ async function run() {
     `           ${catalogue.scholarships} scholarships · ${catalogue.testimonials} success stories`,
     `           ${catalogue.created} created, ${catalogue.updated} updated in place`,
     '',
+    shortlists.skipped
+      ? `Shortlist: skipped (${shortlists.skipped})`
+      : `Shortlist: ${shortlists.courses} courses across ${shortlists.students} students`,
     caseload.skipped
       ? `Caseload:  skipped (${caseload.skipped})`
       : `Caseload:  ${caseload.students} students · ${caseload.appointments} appointments · ${caseload.documents} documents to review`,

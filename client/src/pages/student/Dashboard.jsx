@@ -24,6 +24,7 @@ import CourseCard from '../../components/cards/CourseCard.jsx';
 import StatTile from '../../components/cards/StatTile.jsx';
 
 import useQuery from '../../hooks/useQuery.js';
+import useApply from '../../hooks/useApply.js';
 import studentService from '../../services/studentService.js';
 import { useAuth } from '../../hooks/useAuth.js';
 import { PATHS } from '../../constants/routes.js';
@@ -48,6 +49,7 @@ const stepLink = (step) => `${PATHS.studentProfile}?step=${step}`;
  * so it paints once instead of settling in six stages.
  */
 export default function Dashboard() {
+  const { apply, hasApplied, applyingSlug } = useApply();
   const { user } = useAuth();
   const [pendingId, setPendingId] = useState(null);
 
@@ -342,6 +344,9 @@ export default function Dashboard() {
                 isShortlisted={shortlistedIds.has(course._id)}
                 pending={pendingId === course._id}
                 onShortlistToggle={toggleShortlist}
+                onApply={apply}
+                appliedTo={hasApplied(course)}
+                applying={applyingSlug === course.slug}
               />
             ))}
           </div>

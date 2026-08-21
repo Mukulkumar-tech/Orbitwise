@@ -13,6 +13,7 @@ import { SkeletonGrid } from '../../components/ui/Skeleton.jsx';
 import CourseCard from '../../components/cards/CourseCard.jsx';
 
 import useQuery from '../../hooks/useQuery.js';
+import useApply from '../../hooks/useApply.js';
 import studentService from '../../services/studentService.js';
 import catalogueService from '../../services/catalogueService.js';
 import { PATHS } from '../../constants/routes.js';
@@ -29,6 +30,7 @@ const PAGE_SIZE = 12;
  * a shared link carries only what was actually chosen.
  */
 export default function Matches() {
+  const { apply, hasApplied, applyingSlug } = useApply();
   const [searchParams, setSearchParams] = useSearchParams();
   const [pendingId, setPendingId] = useState(null);
   const [searchDraft, setSearchDraft] = useState(searchParams.get('q') ?? '');
@@ -249,6 +251,9 @@ export default function Matches() {
                 isShortlisted={shortlistedIds.has(course._id)}
                 pending={pendingId === course._id}
                 onShortlistToggle={toggleShortlist}
+                onApply={apply}
+                appliedTo={hasApplied(course)}
+                applying={applyingSlug === course.slug}
               />
             ))}
           </div>

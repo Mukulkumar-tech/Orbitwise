@@ -20,13 +20,14 @@ let server;
 async function seedEphemeralDatabase() {
   const { seedUsers, DEMO_PASSWORD } = await import('./seed/seedUsers.js');
   const { seedCatalogue } = await import('./seed/seedCatalogue.js');
-  const { seedCaseload, seedApplications } = await import('./seed/seedCaseload.js');
+  const { seedCaseload, seedApplications, seedShortlists } = await import('./seed/seedCaseload.js');
 
   const users = await seedUsers();
   const catalogue = await seedCatalogue();
   // Gives the counsellor portal a caseload; without it every screen there is
   // an empty state, which demonstrates none of what the portal is for.
   const caseload = await seedCaseload();
+  await seedShortlists();
   const applications = await seedApplications();
 
   logger.banner('Demo data ready (in-memory database)', [

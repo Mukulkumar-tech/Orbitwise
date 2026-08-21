@@ -298,3 +298,38 @@ export const DOCUMENT_STATUS_TONES = {
   rejected: 'danger',
   expired: 'danger',
 };
+
+/* ─── Intakes ──────────────────────────────────────────────────────────────── */
+
+/**
+ * Month index per intake season, so "September 2027" can be derived rather than
+ * typed. Course.intakes stores season names only — no year — because a course
+ * runs the same seasons every year.
+ */
+const INTAKE_MONTH = { January: 0, February: 1, April: 3, May: 4, July: 6, September: 8, October: 9 };
+
+/**
+ * The soonest intake a student could realistically start.
+ *
+ * Applications need a concrete `{season, year}`, and picking "the first season in
+ * the array" would happily return an intake three months in the past. A season
+ * whose month has already passed this year resolves to next year instead.
+ *
+ * `from` is injectable so this is testable without freezing the clock.
+ */
+export const nextIntake = (seasons = [], from = new Date()) => {
+  const candidates = seasons
+    .filter((season) => season in INTAKE_MONTH)
+    .map((season) => {
+      const month = INTAKE_MONTH[season];
+      // Same-month counts as still open: applications for a September intake are
+      // usually still being processed during September.
+      const year = month < from.getMonth() ? from.getFullYear() + 1 : from.getFullYear();
+      return { season, year, at: new Date(year, month, 1).getTime() };
+    })
+    .sort((a, b) => a.at - b.at);
+
+  if (!candidates.length) return null;
+  const { season, year } = candidates[0];
+  return { season, year };
+};

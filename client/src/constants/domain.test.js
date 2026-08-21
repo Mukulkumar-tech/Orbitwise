@@ -7,6 +7,7 @@ import {
   degreeLabel,
   educationLabel,
   fieldLabel,
+  nextIntake,
 } from './domain.js';
 
 /**
@@ -66,5 +67,49 @@ describe('unknown slugs degrade readably', () => {
       expect(fieldLabel(value)).toBe('');
       expect(degreeLabel(value)).toBe('');
     }
+  });
+});
+
+/**
+ * Course.intakes stores season names with no year, so the year has to be
+ * derived. Getting this wrong means offering a student an intake that has
+ * already passed, which is worse than offering none at all.
+ *
+ * `from` is injectable precisely so these cases can be asserted without
+ * freezing the clock.
+ */
+describe('nextIntake', () => {
+  const june2026 = new Date(2026, 5, 15);
+
+  it('picks the soonest season still ahead this year', () => {
+    expect(nextIntake(['September', 'January'], june2026)).toEqual({ season: 'September', year: 2026 });
+  });
+
+  it('rolls a season that has already passed into next year', () => {
+    expect(nextIntake(['January'], june2026)).toEqual({ season: 'January', year: 2027 });
+  });
+
+  it('treats the current month as still open', () => {
+    // A July intake is usually still processing applications during July.
+    expect(nextIntake(['July'], new Date(2026, 6, 20))).toEqual({ season: 'July', year: 2026 });
+  });
+
+  it('prefers a later season this year over an earlier one next year', () => {
+    expect(nextIntake(['February', 'October'], june2026)).toEqual({ season: 'October', year: 2026 });
+  });
+
+  it('returns null rather than a bogus intake when there is nothing to pick', () => {
+    expect(nextIntake([], june2026)).toBeNull();
+    expect(nextIntake(undefined, june2026)).toBeNull();
+  });
+
+  it('ignores a season it does not recognise', () => {
+    // Guards against the catalogue growing a season name before this map does.
+    expect(nextIntake(['Monsoon'], june2026)).toBeNull();
+    expect(nextIntake(['Monsoon', 'September'], june2026)).toEqual({ season: 'September', year: 2026 });
+  });
+
+  it('rolls every season forward in December', () => {
+    expect(nextIntake(['January', 'September'], new Date(2026, 11, 10))).toEqual({ season: 'January', year: 2027 });
   });
 });

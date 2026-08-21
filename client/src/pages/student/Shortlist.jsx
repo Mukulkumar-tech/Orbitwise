@@ -11,6 +11,7 @@ import CourseCard from '../../components/cards/CourseCard.jsx';
 import StatTile from '../../components/cards/StatTile.jsx';
 
 import useQuery from '../../hooks/useQuery.js';
+import useApply from '../../hooks/useApply.js';
 import studentService from '../../services/studentService.js';
 import { PATHS } from '../../constants/routes.js';
 import { bandOf, formatInr } from '../../constants/domain.js';
@@ -24,6 +25,7 @@ import { bandOf, formatInr } from '../../constants/domain.js';
  * is reflected here immediately.
  */
 export default function Shortlist() {
+  const { apply, hasApplied, applyingSlug } = useApply();
   const [pendingId, setPendingId] = useState(null);
   const { data, isLoading, isError, error, refetch, revalidate } = useQuery(
     (signal) => studentService.getShortlist(signal),
@@ -103,6 +105,9 @@ export default function Shortlist() {
                 isShortlisted
                 pending={pendingId === course._id}
                 onShortlistToggle={remove}
+                onApply={apply}
+                appliedTo={hasApplied(course)}
+                applying={applyingSlug === course.slug}
               />
             ))}
           </div>

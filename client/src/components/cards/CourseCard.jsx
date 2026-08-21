@@ -1,16 +1,5 @@
 import { useId, useState } from 'react';
-import {
-  Bookmark,
-  BookmarkCheck,
-  Building2,
-  CalendarDays,
-  ChevronDown,
-  Clock,
-  GraduationCap,
-  Sparkles,
-  TrendingUp,
-  Wallet,
-} from 'lucide-react';
+import { Bookmark, BookmarkCheck, Building2, CalendarDays, CheckCircle2, ChevronDown, Clock, FileText, GraduationCap, Sparkles, TrendingUp, Wallet } from 'lucide-react';
 
 import Badge from '../ui/Badge.jsx';
 import Button from '../ui/Button.jsx';
@@ -38,7 +27,15 @@ import cn from '../../utils/cn.js';
  * seven scorers each unfolded is a wall of text; one expanded on demand is an
  * explanation.
  */
-export default function CourseCard({ course, isShortlisted = false, onShortlistToggle, pending = false }) {
+export default function CourseCard({
+  course,
+  isShortlisted = false,
+  onShortlistToggle,
+  onApply,
+  appliedTo = false,
+  pending = false,
+  applying = false,
+}) {
   const [expanded, setExpanded] = useState(false);
   const detailsId = useId();
 
@@ -178,9 +175,26 @@ export default function CourseCard({ course, isShortlisted = false, onShortlistT
               leftIcon={isShortlisted ? BookmarkCheck : Bookmark}
               isLoading={pending}
               onClick={() => onShortlistToggle(course)}
-              className="ml-auto"
+              className={cn(!onApply && 'ml-auto')}
             >
               {isShortlisted ? 'Shortlisted' : 'Shortlist'}
+            </Button>
+          )}
+
+          {/* Only rendered when a caller supplies a handler, so the public
+              catalogue — where there is nobody to apply as — is unchanged.
+              Already-applied courses link to the record instead of offering a
+              second attempt the API would reject with a 409. */}
+          {onApply && (
+            <Button
+              variant={appliedTo ? 'subtle' : 'primary'}
+              size="sm"
+              leftIcon={appliedTo ? CheckCircle2 : FileText}
+              isLoading={applying}
+              onClick={() => onApply(course)}
+              className="ml-auto"
+            >
+              {appliedTo ? 'View application' : 'Apply'}
             </Button>
           )}
         </div>

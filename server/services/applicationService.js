@@ -76,18 +76,19 @@ export const applicationService = {
    * documents attached to it, and a one-click "submitted" would be a lie the
    * student discovers only when a university never replies.
    */
-  async create({ studentId, courseSlug, intake, matchScore }) {
+  async create({ studentId, courseSlug, intake, matchScore, actor }) {
     const course = await Course.findOne({ slug: courseSlug, isActive: true }).populate('university', 'name').lean();
     if (!course) throw ApiError.notFound('That course could not be found');
 
     const existing = await Application.findOne({ student: studentId, course: course._id });
     if (existing) {
-      throw ApiError.conflict('You already have an application for this course', {
+      throw ApiError.conflict('There is already an application for this course', {
         errors: { course: 'Application already exists' },
       });
     }
 
     const country = await Country.findOne({ code: course.countryCode }).lean();
+    const startedBy = actor?.role === ROLES.COUNSELLOR ? ROLES.COUNSELLOR : ROLES.STUDENT;
 
     const application = await Application.create({
       student: studentId,
@@ -110,10 +111,19 @@ export const applicationService = {
       },
       intake: { season: intake?.season ?? '', year: intake?.year ?? null },
       status: APPLICATION_STATUS.DRAFT,
-      timeline: [{ status: APPLICATION_STATUS.DRAFT, note: 'Application started', actor: 'student', actorId: studentId }],
+      timeline: [
+        {
+          status: APPLICATION_STATUS.DRAFT,
+          note: startedBy === ROLES.COUNSELLOR ? 'Application started by your counsellor' : 'Application started',
+          actor: startedBy,
+          actorId: actor?.userId ?? studentId,
+        },
+      ],
     });
 
-    return forAudience(application, ROLES.STUDENT);
+    // Audience follows the caller, not the owner: a counsellor gets their own
+    // view of the record they just created, private notes included.
+    return forAudience(application, startedBy);
   },
 
   async listForStudent(studentId, { status } = {}) {

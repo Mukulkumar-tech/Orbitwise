@@ -24,7 +24,14 @@ router.get('/stats', authorize(ROLES.STUDENT), applicationController.getApplicat
 router
   .route('/')
   .get(authorize(ROLES.STUDENT), validate({ query: applicationListQuery }), applicationController.listApplications)
-  .post(authorize(ROLES.STUDENT), validate({ body: createApplicationSchema }), applicationController.createApplication);
+  // Counsellors too: a student who has been guided to a course should not have
+  // to go and click the button themselves. The controller resolves whose
+  // application it is and enforces the caseload boundary.
+  .post(
+    authorize(ROLES.STUDENT, ROLES.COUNSELLOR),
+    validate({ body: createApplicationSchema }),
+    applicationController.createApplication
+  );
 
 router.get('/:id', validate({ params: applicationIdParam }), applicationController.getApplication);
 

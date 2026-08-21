@@ -297,3 +297,107 @@ describe('GET /api/courses/compare', () => {
     expect(response.body.errors?.slugs ?? response.body.message).toBeTruthy();
   });
 });
+
+describe('POST /api/applications — counsellor acting for a student', () => {
+  const startFor = async (token, studentId, overrides = {}) =>
+    agent()
+      .post('/api/applications')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ courseSlug, studentId, intake: { season: 'September', year: 2027 }, ...overrides });
+
+  /** Puts the student on the caseload the way a first booking does. */
+  const assign = async (counsellorUserId, studentId) => {
+    const { default: Counsellor } = await import('../models/Counsellor.js');
+    await Counsellor.findOneAndUpdate(
+      { user: counsellorUserId },
+      { $addToSet: { assignedStudents: studentId } },
+      { upsert: true, setDefaultsOnInsert: true }
+    );
+  };
+
+  it('opens the application against the student, not the counsellor', async () => {
+    const student = await registerStudent();
+    const studentId = (student.user._id ?? student.user.id).toString();
+    const counsellor = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(counsellor.user._id, studentId);
+
+    const response = await startFor(counsellor.accessToken, studentId);
+
+    expect(response.status).toBe(201);
+    // Ownership is the point: it has to show up in the student's own list.
+    const stored = await Application.findById(response.body.data._id).lean();
+    expect(stored.student.toString()).toBe(studentId);
+
+    const mine = await agent()
+      .get('/api/applications')
+      .set('Authorization', `Bearer ${student.accessToken}`);
+    expect(mine.body.data).toHaveLength(1);
+  });
+
+  it('records the counsellor as the actor so the timeline stays honest', async () => {
+    const student = await registerStudent();
+    const studentId = (student.user._id ?? student.user.id).toString();
+    const counsellor = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(counsellor.user._id, studentId);
+
+    const response = await startFor(counsellor.accessToken, studentId);
+
+    const [entry] = response.body.data.timeline;
+    expect(entry.actor).toBe('counsellor');
+    expect(entry.actorId).toBe(counsellor.user._id.toString());
+    // The student needs to know why an application appeared that they did not start.
+    expect(entry.note).toMatch(/counsellor/i);
+  });
+
+  it('refuses a student who is not on the caseload', async () => {
+    const stranger = await registerStudent();
+    const counsellor = await createUserWithRole(ROLES.COUNSELLOR);
+    await assign(counsellor.user._id, (await registerStudent()).user._id);
+
+    const response = await startFor(
+      counsellor.accessToken,
+      (stranger.user._id ?? stranger.user.id).toString()
+    );
+
+    expect(response.status).toBe(403);
+  });
+
+  it('requires a counsellor to name the student', async () => {
+    const counsellor = await createUserWithRole(ROLES.COUNSELLOR);
+    const response = await agent()
+      .post('/api/applications')
+      .set('Authorization', `Bearer ${counsellor.accessToken}`)
+      .send({ courseSlug });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('ignores a studentId sent by a student — they can only apply for themselves', async () => {
+    // The dangerous case: without this, any student could open an application on
+    // another student's record just by adding a field to the request body.
+    const victim = await registerStudent();
+    const attacker = await registerStudent();
+    const victimId = (victim.user._id ?? victim.user.id).toString();
+
+    const response = await startFor(attacker.accessToken, victimId);
+
+    expect(response.status).toBe(201);
+    const stored = await Application.findById(response.body.data._id).lean();
+    expect(stored.student.toString()).not.toBe(victimId);
+    expect(stored.student.toString()).toBe((attacker.user._id ?? attacker.user.id).toString());
+
+    const victimList = await agent()
+      .get('/api/applications')
+      .set('Authorization', `Bearer ${victim.accessToken}`);
+    expect(victimList.body.data).toHaveLength(0);
+  });
+
+  it('refuses an admin — assignment, not elevation, is what grants this', async () => {
+    const student = await registerStudent();
+    const admin = await createUserWithRole(ROLES.ADMIN);
+
+    const response = await startFor(admin.accessToken, (student.user._id ?? student.user.id).toString());
+
+    expect(response.status).toBe(403);
+  });
+});

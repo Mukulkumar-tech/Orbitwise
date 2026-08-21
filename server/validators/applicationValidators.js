@@ -9,6 +9,17 @@ const objectId = z
 export const applicationIdParam = z.object({ id: objectId });
 
 export const createApplicationSchema = z.object({
+  /**
+   * Only meaningful for a counsellor acting on a student's behalf.
+   *
+   * Ignored outright when a student is the caller — the controller uses their
+   * own id regardless, so passing someone else's here achieves nothing.
+   */
+  studentId: z
+    .string()
+    .trim()
+    .regex(/^[0-9a-fA-F]{24}$/, 'Invalid student identifier')
+    .optional(),
   courseSlug: z
     .string()
     .trim()

@@ -416,3 +416,72 @@ export async function seedApplications({ force = false } = {}) {
   await Application.insertMany(docs);
   return { applications: docs.length };
 }
+
+/**
+ * Shortlists for the caseload students.
+ *
+ * The counsellor's student page offers "Start application" from the student's
+ * shortlist, so an empty shortlist makes that flow look unbuilt rather than
+ * unused. Courses are picked to overlap the student's own destinations and
+ * degree goal, because a shortlist full of unrelated courses would misrepresent
+ * how the product works.
+ *
+ * Deliberately leaves a couple of shortlisted courses *without* an application,
+ * so there is always something for the counsellor to act on.
+ */
+export async function seedShortlists({ force = false } = {}) {
+  const TARGETS = [
+    { email: 'student@orbitwise.dev', degreeLevel: 'Masters', countries: ['CA', 'DE', 'GB'], take: 4 },
+    { email: 'ishita.rao@orbitwise.dev', degreeLevel: 'Bachelors', countries: ['CA', 'DE'], take: 3 },
+    { email: 'vikram.iyer@orbitwise.dev', degreeLevel: 'Masters', countries: ['US', 'CA'], take: 3 },
+    { email: 'aditya.krishnan@orbitwise.dev', degreeLevel: 'Masters', countries: ['GB', 'IE'], take: 2 },
+  ];
+
+  const users = await User.find({ email: { $in: TARGETS.map((t) => t.email) } })
+    .select('_id email')
+    .lean();
+  const idByEmail = new Map(users.map((u) => [u.email, u._id]));
+
+  let filled = 0;
+  let courses = 0;
+
+  for (const target of TARGETS) {
+    const userId = idByEmail.get(target.email);
+    if (!userId) continue;
+
+    const profile = await StudentProfile.findOne({ user: userId }).select('shortlist').lean();
+    if (!profile) continue;
+    if (profile.shortlist?.length && !force) continue;
+
+    // Prefer courses matching their goal; fall back to the degree level alone so
+    // a thin catalogue still produces a shortlist rather than an empty one.
+    let picked = await Course.find({
+      isActive: true,
+      degreeLevel: target.degreeLevel,
+      countryCode: { $in: target.countries },
+    })
+      .select('_id')
+      .limit(target.take)
+      .lean();
+
+    if (picked.length < target.take) {
+      const extra = await Course.find({
+        isActive: true,
+        degreeLevel: target.degreeLevel,
+        _id: { $nin: picked.map((c) => c._id) },
+      })
+        .select('_id')
+        .limit(target.take - picked.length)
+        .lean();
+      picked = picked.concat(extra);
+    }
+
+    if (!picked.length) continue;
+
+    await StudentProfile.updateOne({ user: userId }, { $set: { shortlist: picked.map((c) => c._id) } });
+    filled += 1;
+    courses += picked.length;
+  }
+
+  return filled ? { students: filled, courses } : { skipped: 'nothing to shortlist' };
+}

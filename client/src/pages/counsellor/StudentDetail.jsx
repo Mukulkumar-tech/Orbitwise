@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CalendarClock, FileText, GraduationCap, Mail, Phone } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { ArrowLeft, Bookmark, CalendarClock, Check, FilePlus2, FileText, GraduationCap, Mail, Phone } from 'lucide-react';
 
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
@@ -10,6 +12,7 @@ import EmptyState from '../../components/ui/EmptyState.jsx';
 import ProgressRing from '../../components/ui/ProgressRing.jsx';
 import useQuery from '../../hooks/useQuery.js';
 import counsellorService from '../../services/counsellorService.js';
+import applicationService from '../../services/applicationService.js';
 import { PATHS } from '../../constants/routes.js';
 import {
   APPLICATION_STATUS_TONES,
@@ -23,6 +26,7 @@ import {
   fieldLabel,
   formatInr,
   fundingLabel,
+  nextIntake,
   streamLabel,
   testLabel,
 } from '../../constants/domain.js';
@@ -65,6 +69,7 @@ function Fact({ label, children }) {
  */
 export default function CounsellorStudentDetail() {
   const { id } = useParams();
+  const [startingSlug, setStartingSlug] = useState(null);
   const { data, isLoading, isError, error, refetch } = useQuery(
     (signal) => counsellorService.student(id, signal),
     [id]
@@ -83,10 +88,37 @@ export default function CounsellorStudentDetail() {
     );
   }
 
+  /**
+   * Opens an application on the student's behalf.
+   *
+   * The server records the counsellor as the actor, so the student's timeline
+   * says who started it rather than implying they did it themselves.
+   */
+  const startApplication = async (course) => {
+    setStartingSlug(course.slug);
+    try {
+      await applicationService.create({
+        studentId: id,
+        courseSlug: course.slug,
+        intake: nextIntake(course.intakes) ?? undefined,
+      });
+      toast.success(`Application started for ${course.title}`);
+      await refetch();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setStartingSlug(null);
+    }
+  };
+
   if (isError) return <ErrorState error={error} onRetry={refetch} title="Couldn’t load this student" />;
 
   const { student, profile, completion, applications, documents, appointments } = data;
   const pendingDocs = documents.filter((doc) => ['uploaded', 'under_review'].includes(doc.status)).length;
+  // Populated by the API; inactive courses are dropped because applying to one
+  // would fail server-side with "course could not be found".
+  const shortlist = (profile?.shortlist ?? []).filter((course) => course?.isActive !== false);
+  const appliedSlugs = new Set(applications.map((application) => application.snapshot?.courseSlug).filter(Boolean));
 
   return (
     <div>
@@ -228,6 +260,61 @@ export default function CounsellorStudentDetail() {
                     </Badge>
                   </li>
                 ))}
+              </ul>
+            )}
+          </section>
+
+          {/* ─── Their shortlist, as a place to act from ────────────────── */}
+          <section className="rounded-2xl bg-surface p-6 shadow-sm hairline">
+            <h2 className="text-base font-semibold text-navy-950">
+              Their shortlist <span className="text-navy-400">({shortlist.length})</span>
+            </h2>
+            <p className="mt-1 text-xs text-navy-500">
+              Start an application for them. They will see it as a draft, marked as started by you.
+            </p>
+
+            {shortlist.length === 0 ? (
+              <EmptyState
+                className="mt-4"
+                size="sm"
+                icon={Bookmark}
+                title="Nothing shortlisted"
+                description="Once they save courses, you can open applications from here."
+              />
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {shortlist.map((course) => {
+                  const already = appliedSlugs.has(course.slug);
+                  return (
+                    <li
+                      key={course._id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-navy-50 p-3.5"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-navy-950">{course.title}</p>
+                        <p className="truncate text-xs text-navy-500">
+                          {course.universityName} · {degreeLabel(course.degreeLevel)}
+                          {course.tuitionPerYearInr ? ` · ${formatInr(course.tuitionPerYearInr)}/yr` : ''}
+                        </p>
+                      </div>
+
+                      {already ? (
+                        <Badge tone="success" size="sm" icon={Check}>
+                          Applied
+                        </Badge>
+                      ) : (
+                        <Button
+                          size="sm"
+                          leftIcon={FilePlus2}
+                          isLoading={startingSlug === course.slug}
+                          onClick={() => startApplication(course)}
+                        >
+                          Start application
+                        </Button>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
